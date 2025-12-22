@@ -1,0 +1,41 @@
+{
+  "dataset": "freelaw_nh",
+  "tocId": "http://localhost:4000/resources/8f573e6c8e8ce7ac3761f44de8d0ff2f",
+  "chunkIds": [
+    "http://localhost:4000/resources/9054edc54e45cef2f4ef8c5bd6259981",
+    "http://localhost:4000/resources/06a3fd0cbd3fd7960876fd7f3c8f2307",
+    "http://localhost:4000/resources/c8ce846c1ca067374479ede227b3e238",
+    "http://localhost:4000/resources/42e0aa76a223ee1f309acd56d9a1f4ba"
+  ],
+  "references": [
+    {
+      "text": "Wyman v. Stark (1975-01-06)",
+      "start": 102,
+      "end": 129,
+      "documentId": "http://localhost:4000/resources/9054edc54e45cef2f4ef8c5bd6259981",
+      "annotationId": "http://localhost:4000/annotations/kbvy7YmMG_XsKN9JEggvv"
+    },
+    {
+      "text": "Engineering Associates of New England, Inc. v. B & L Liquidating Corp. (1975-09-30)",
+      "start": 133,
+      "end": 216,
+      "documentId": "http://localhost:4000/resources/06a3fd0cbd3fd7960876fd7f3c8f2307",
+      "annotationId": "http://localhost:4000/annotations/VZN-z4utj-xwf7KdkomhI"
+    },
+    {
+      "text": "Opinion of the Justices (1975-02-07)",
+      "start": 220,
+      "end": 256,
+      "documentId": "http://localhost:4000/resources/c8ce846c1ca067374479ede227b3e238",
+      "annotationId": "http://localhost:4000/annotations/PQ0kX-bBjpvFnhNnVheYB"
+    },
+    {
+      "text": "State v. Collins (1975-09-30)",
+      "start": 260,
+      "end": 289,
+      "documentId": "http://localhost:4000/resources/42e0aa76a223ee1f309acd56d9a1f4ba",
+      "annotationId": "http://localhost:4000/annotations/xnmBxbiEKz6zrp51LxuY7"
+    }
+  ],
+  "formattedText": ""
+}
