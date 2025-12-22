@@ -47,13 +47,11 @@ EOF
     echo "Created .env with localhost URLs"
 fi
 
-# Install Node.js if not available (needed to run semiont init)
-if ! command -v node &> /dev/null; then
-    echo "Installing Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-    apt-get install -y nodejs
-    echo "  ✓ Node.js installed"
-fi
+# Install Node.js 22.x
+echo "Installing Node.js 22.x..."
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+apt-get install -y nodejs
+echo "  ✓ Node.js $(node --version) installed"
 
 # Install @semiont/cli to run semiont init
 echo "Installing @semiont/cli@latest..."
