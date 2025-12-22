@@ -82,8 +82,8 @@ This ensures the backend has everything it needs to start successfully on first 
 
 Install published packages into the devcontainer workspace:
 
-1. **@semiont/cli@0.2.0** - Command-line tool (global install)
-2. **@semiont/api-client@0.2.0** - TypeScript SDK (local to demo/)
+1. **@semiont/cli@latest** - Command-line tool (global install)
+2. **@semiont/api-client@latest** - TypeScript SDK (workspace dependency)
 
 ### Version Management
 

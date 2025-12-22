@@ -39,10 +39,10 @@ All components are **published artifacts** (not built from source):
 - **PostgreSQL** (`postgres:16-alpine`)
   - Database at localhost:5432
 
-- **@semiont/cli** (`0.2.0`)
+- **@semiont/cli** (`latest`)
   - Command-line tool (globally installed)
 
-- **@semiont/api-client** (`0.2.0`)
+- **@semiont/api-client** (`latest`)
   - TypeScript SDK (in node_modules)
 
 ## Setup Process
@@ -50,7 +50,7 @@ All components are **published artifacts** (not built from source):
 After container creation (~1-2 minutes):
 
 1. **Services start** - Frontend, backend, and database containers
-2. **CLI installed** - `@semiont/cli@0.2.0` globally
+2. **CLI installed** - `@semiont/cli@latest` globally
 3. **Dependencies installed** - Demo scripts and API client
 4. **Demo user created** - Email: `demo@example.com`, Password: `demo123`
 5. **Configuration saved** - Credentials stored in `.env`

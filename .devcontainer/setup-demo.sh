@@ -57,8 +57,8 @@ echo ""
 cd /workspaces/semiont-agents
 
 # Install Semiont CLI globally
-print_status "Installing @semiont/cli@$SEMIONT_VERSION globally..."
-npm install -g "@semiont/cli@$SEMIONT_VERSION" 2>&1 | grep -v "npm warn" || true
+print_status "Installing @semiont/cli@latest globally..."
+npm install -g "@semiont/cli@latest" 2>&1 | grep -v "npm warn" || true
 print_success "CLI installed"
 
 # Verify CLI installation

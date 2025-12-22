@@ -56,8 +56,8 @@ if ! command -v node &> /dev/null; then
 fi
 
 # Install @semiont/cli to run semiont init
-echo "Installing @semiont/cli@${SEMIONT_VERSION}..."
-npm install -g "@semiont/cli@${SEMIONT_VERSION}"
+echo "Installing @semiont/cli@latest..."
+npm install -g "@semiont/cli@latest"
 echo "  ✓ CLI installed"
 
 # Pre-initialize project directory for backend container
@@ -70,7 +70,7 @@ cd "$PROJECT_DIR"
 
 # Run semiont init to create initial project structure
 echo "Running semiont init..."
-npx --yes "@semiont/cli@${SEMIONT_VERSION}" init
+npx --yes "@semiont/cli@latest" init
 echo "  ✓ Project initialized with semiont init"
 
 # Overwrite with our templates
