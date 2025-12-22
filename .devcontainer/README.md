@@ -30,10 +30,10 @@ code .
 
 All components are **published artifacts** (not built from source):
 
-- **Semiont Frontend** (`ghcr.io/the-ai-alliance/semiont-frontend:0.2.0`)
+- **Semiont Frontend** (`ghcr.io/the-ai-alliance/semiont-frontend:latest`)
   - Web UI at http://localhost:3000
 
-- **Semiont Backend** (`ghcr.io/the-ai-alliance/semiont-backend:0.2.0`)
+- **Semiont Backend** (`ghcr.io/the-ai-alliance/semiont-backend:latest`)
   - API server at http://localhost:4000
 
 - **PostgreSQL** (`postgres:16-alpine`)

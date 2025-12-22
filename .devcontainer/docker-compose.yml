@@ -33,7 +33,7 @@ services:
 
   # Semiont Backend API
   backend:
-    image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION:-0.2.0}
+    image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION:-latest}
     restart: unless-stopped
     depends_on:
       postgres:
@@ -71,7 +71,7 @@ services:
 
   # Semiont Frontend UI
   frontend:
-    image: ghcr.io/the-ai-alliance/semiont-frontend:${SEMIONT_VERSION:-0.2.0}
+    image: ghcr.io/the-ai-alliance/semiont-frontend:${SEMIONT_VERSION:-latest}
     restart: unless-stopped
     depends_on:
       backend:

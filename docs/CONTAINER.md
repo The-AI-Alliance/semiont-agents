@@ -17,8 +17,8 @@ A standalone, production-ready demo environment that uses **published Semiont ar
 Use **Docker Compose** to orchestrate three containers:
 
 1. **PostgreSQL** (`postgres:16-alpine`) - Database service
-2. **Semiont Backend** (`ghcr.io/the-ai-alliance/semiont-backend:0.2.0`) - API server
-3. **Semiont Frontend** (`ghcr.io/the-ai-alliance/semiont-frontend:0.2.0`) - Web UI
+2. **Semiont Backend** (`ghcr.io/the-ai-alliance/semiont-backend:latest`) - API server
+3. **Semiont Frontend** (`ghcr.io/the-ai-alliance/semiont-frontend:latest`) - Web UI
 
 ### Bootstrap Sequence
 
@@ -87,10 +87,11 @@ Install published packages into the devcontainer workspace:
 
 ### Version Management
 
-All Semiont versions pinned to `0.2.0` initially:
-- Update via environment variable `SEMIONT_VERSION=0.2.0`
-- Single source of truth for version across all artifacts
-- Easy to update for testing new releases
+All Semiont artifacts use `latest` tags by default:
+- Docker images: `ghcr.io/the-ai-alliance/semiont-backend:latest` and `semiont-frontend:latest`
+- npm packages: `@semiont/cli@latest` and `@semiont/api-client@latest`
+- Override via environment variable `SEMIONT_VERSION` to pin to specific version (e.g., `0.2.0`)
+- Easy to update - just rebuild container to get newest stable releases
 
 ## Directory Structure
 
