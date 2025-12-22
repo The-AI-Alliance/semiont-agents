@@ -20,6 +20,64 @@ Use **Docker Compose** to orchestrate three containers:
 2. **Semiont Backend** (`ghcr.io/the-ai-alliance/semiont-backend:0.2.0`) - API server
 3. **Semiont Frontend** (`ghcr.io/the-ai-alliance/semiont-frontend:0.2.0`) - Web UI
 
+### Bootstrap Sequence
+
+The devcontainer setup follows a specific bootstrap sequence to ensure reliable startup:
+
+#### 1. Pre-Container Initialization (initializeCommand)
+
+`init-env.sh` runs on the HOST before Docker Compose starts containers:
+
+- Creates `.devcontainer/.env` with environment-specific URLs (Codespaces or localhost)
+- **Pre-initializes** `project/` directory with Semiont configuration files:
+  - Copies `.devcontainer/semiont.json` → `project/semiont.json` (base configuration template)
+  - Copies `.devcontainer/environments-demo.json` → `project/environments/demo.json` (environment template)
+  - **Updates URLs in `project/environments/demo.json`** with Codespaces-specific URLs if `CODESPACE_NAME` is detected
+- **This happens BEFORE docker-compose starts** - ensuring config files have correct URLs before backend boots
+
+**Why pre-initialize?** The backend container requires a valid Semiont project directory at startup. The backend reads `SEMIONT_ROOT` environment variable and expects to find:
+1. `semiont.json` - base project configuration
+2. `environments/{SEMIONT_ENV}.json` - environment-specific configuration (e.g., `environments/demo.json`)
+
+**BOTH files must exist** before the backend starts. Without both files, the backend fails and never starts.
+
+**Template files:** The `.devcontainer/semiont.json` and `.devcontainer/environments-demo.json` files are pre-created templates (equivalent to what `semiont init` would generate) that are committed to the repository. We cannot run `semiont init` during `initializeCommand` because Node.js is not available on the Codespaces host.
+
+#### 2. Container Startup
+
+Docker Compose starts services in dependency order:
+
+1. **postgres** - Database starts first with health check
+2. **backend** - Semiont API server (depends on postgres being healthy, requires pre-initialized project/)
+3. **frontend** - Semiont web UI (depends on backend being healthy)
+4. **demo-workspace** - Your development environment (shares network with backend)
+
+#### 3. Post-Container Setup (postCreateCommand)
+
+`setup-demo.sh` runs INSIDE the container after startup (~1-2 minutes):
+
+1. **CLI installed** - `@semiont/cli@0.2.0` globally via npm
+2. **Project verified** - Confirms configuration files exist (created by init-env.sh)
+3. **URLs updated** - Updates Codespaces-specific URLs if needed
+4. **Services wait** - Waits for backend and frontend health checks to pass
+5. **Services provisioned** - Uses Semiont CLI to provision backend/frontend (if needed)
+6. **Demo user created** - Email: `demo@example.com`, Password: `demo123`
+7. **Dependencies installed** - Demo scripts and API client
+8. **Configuration saved** - Credentials stored in workspace `.env`
+
+#### Solving the Bootstrap Problem
+
+**Problem:** Chicken-and-egg situation where:
+- The backend can't start without Semiont config files in `project/`
+- The config files can't be created without Node.js (in the container)
+- The container can't fully start until the backend is healthy
+
+**Solution:** Split initialization into two phases:
+1. `init-env.sh` creates minimal config files using shell/node (available on host)
+2. `setup-demo.sh` completes setup after containers are running
+
+This ensures the backend has everything it needs to start successfully on first boot.
+
 ### NPM Package Installation
 
 Install published packages into the devcontainer workspace:

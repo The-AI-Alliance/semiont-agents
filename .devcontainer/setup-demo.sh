@@ -69,62 +69,76 @@ else
     print_warning "CLI command 'semiont' not in PATH, but package is installed"
 fi
 
-# Create project directory for Semiont workspace
-print_status "Creating project directory..."
-mkdir -p /workspaces/semiont-agents/project
+# Verify project directory exists (created by init-env.sh)
 export SEMIONT_ROOT=/workspaces/semiont-agents/project
 export SEMIONT_ENV=demo
-print_success "Project directory created: $SEMIONT_ROOT"
 
-# Initialize Semiont project
-print_status "Initializing Semiont project..."
-cd $SEMIONT_ROOT || exit 1
-semiont init || {
-    print_warning "Project already initialized or init failed - continuing"
-}
-print_success "Project initialized"
+if [ ! -d "$SEMIONT_ROOT" ]; then
+    print_error "Project directory not found at $SEMIONT_ROOT"
+    print_error "This should have been created by init-env.sh"
+    exit 1
+fi
 
-# Copy semiont.json configuration
-print_status "Configuring semiont.json..."
-cp /workspaces/semiont-agents/.devcontainer/semiont.json semiont.json
-print_success "semiont.json configured"
+print_status "Verifying project configuration..."
 
-# Copy and configure environment
-print_status "Configuring environment..."
-mkdir -p environments
-cp /workspaces/semiont-agents/.devcontainer/environments-demo.json environments/demo.json
+# Check if already initialized by init-env.sh
+if [ -f "$SEMIONT_ROOT/semiont.json" ] && [ -f "$SEMIONT_ROOT/environments/demo.json" ]; then
+    print_success "Project already initialized by init-env.sh"
+else
+    print_status "Initializing project configuration..."
 
-# Update URLs for Codespaces if running in GitHub Codespaces
+    # Initialize Semiont project
+    cd $SEMIONT_ROOT || exit 1
+    semiont init || {
+        print_warning "semiont init failed - copying config files manually"
+    }
+
+    # Copy semiont.json if not present
+    if [ ! -f "semiont.json" ]; then
+        cp /workspaces/semiont-agents/.devcontainer/semiont.json semiont.json
+        print_success "semiont.json configured"
+    fi
+
+    # Copy environment config if not present
+    mkdir -p environments
+    if [ ! -f "environments/demo.json" ]; then
+        cp /workspaces/semiont-agents/.devcontainer/environments-demo.json environments/demo.json
+        print_success "environments/demo.json configured"
+    fi
+fi
+
+# Detect environment and set URLs
 if [ -n "${CODESPACE_NAME:-}" ]; then
-    print_status "Detected GitHub Codespaces, updating backend URLs..."
-
     FRONTEND_URL="https://${CODESPACE_NAME}-3000.app.github.dev"
     BACKEND_URL="https://${CODESPACE_NAME}-4000.app.github.dev"
     SITE_DOMAIN="${CODESPACE_NAME}-3000.app.github.dev"
 
-    # Update environment config for backend
-    node -e "
-    const fs = require('fs');
-    const baseConfig = JSON.parse(fs.readFileSync('semiont.json', 'utf-8'));
-    if (!baseConfig.site) {
-      throw new Error('semiont.json must have site configuration');
-    }
+    # Verify URLs are properly set in config
+    cd $SEMIONT_ROOT || exit 1
+    CURRENT_BACKEND_URL=$(node -e "console.log(JSON.parse(require('fs').readFileSync('environments/demo.json', 'utf-8')).services.backend.publicURL)" 2>/dev/null || echo "")
 
-    const envFile = 'environments/demo.json';
-    const config = JSON.parse(fs.readFileSync(envFile, 'utf-8'));
-    config.site.domain = '${SITE_DOMAIN}';
-    config.site.oauthAllowedDomains = ['${SITE_DOMAIN}', ...baseConfig.site.oauthAllowedDomains];
-    config.services.frontend.url = '${FRONTEND_URL}';
-    config.services.backend.publicURL = '${BACKEND_URL}';
-    config.services.backend.corsOrigin = '${FRONTEND_URL}';
-    fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
-    "
-
-    print_success "URLs configured for Codespaces: ${FRONTEND_URL}"
+    if [ "$CURRENT_BACKEND_URL" != "$BACKEND_URL" ]; then
+        print_status "Updating Codespaces URLs in configuration..."
+        node -e "
+        const fs = require('fs');
+        const baseConfig = JSON.parse(fs.readFileSync('semiont.json', 'utf-8'));
+        const envFile = 'environments/demo.json';
+        const config = JSON.parse(fs.readFileSync(envFile, 'utf-8'));
+        config.site.domain = '${SITE_DOMAIN}';
+        config.site.oauthAllowedDomains = ['${SITE_DOMAIN}', ...(baseConfig.site?.oauthAllowedDomains || [])];
+        config.services.frontend.url = '${FRONTEND_URL}';
+        config.services.backend.publicURL = '${BACKEND_URL}';
+        config.services.backend.corsOrigin = '${FRONTEND_URL}';
+        fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
+        "
+        print_success "URLs configured for Codespaces"
+    else
+        print_success "Codespaces URLs already configured"
+    fi
 else
     FRONTEND_URL="http://localhost:3000"
     BACKEND_URL="http://localhost:4000"
-    print_success "Environment configured for localhost"
+    print_success "Using localhost URLs"
 fi
 
 # Wait for backend service to be healthy

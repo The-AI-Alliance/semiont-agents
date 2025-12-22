@@ -1,10 +1,13 @@
 #!/bin/bash
 # init-env.sh - Runs on HOST before containers start
 # Creates .env file for docker-compose with appropriate URLs
+# AND pre-initializes project directory for backend container
 
 set -euo pipefail
 
 cd "$(dirname "$0")"
+
+SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.0}"
 
 # Check if running in Codespaces
 if [ -n "${CODESPACE_NAME:-}" ]; then
@@ -20,12 +23,16 @@ NEXT_PUBLIC_API_URL=${BACKEND_URL}
 NEXTAUTH_URL=${FRONTEND_URL}
 NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=${SITE_DOMAIN}
-SEMIONT_VERSION=${SEMIONT_VERSION:-0.2.0}
+SEMIONT_VERSION=${SEMIONT_VERSION}
 EOF
 
     echo "Created .env with Codespaces URLs"
 else
     echo "Local environment detected"
+
+    FRONTEND_URL="http://localhost:3000"
+    BACKEND_URL="http://localhost:4000"
+    SITE_DOMAIN="localhost:3000"
 
     # Create .env with localhost URLs
     cat > .env <<EOF
@@ -34,8 +41,61 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXTAUTH_URL=http://localhost:3000
 NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=
-SEMIONT_VERSION=${SEMIONT_VERSION:-0.2.0}
+SEMIONT_VERSION=${SEMIONT_VERSION}
 EOF
 
     echo "Created .env with localhost URLs"
 fi
+
+# Install Node.js if not available (needed to run semiont init)
+if ! command -v node &> /dev/null; then
+    echo "Installing Node.js..."
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+    apt-get install -y nodejs
+    echo "  ✓ Node.js installed"
+fi
+
+# Install @semiont/cli to run semiont init
+echo "Installing @semiont/cli@${SEMIONT_VERSION}..."
+npm install -g "@semiont/cli@${SEMIONT_VERSION}"
+echo "  ✓ CLI installed"
+
+# Pre-initialize project directory for backend container
+# This must happen BEFORE docker-compose starts the backend
+echo "Initializing project directory for backend container..."
+
+PROJECT_DIR="../project"
+mkdir -p "$PROJECT_DIR"
+cd "$PROJECT_DIR"
+
+# Run semiont init to create initial project structure
+echo "Running semiont init..."
+npx --yes "@semiont/cli@${SEMIONT_VERSION}" init
+echo "  ✓ Project initialized with semiont init"
+
+# Overwrite with our templates
+echo "Copying configuration templates..."
+cp ../.devcontainer/semiont.json semiont.json
+cp ../.devcontainer/environments-demo.json environments/demo.json
+echo "  ✓ Templates copied"
+
+# Update URLs in demo.json for the detected environment
+if [ -n "${CODESPACE_NAME:-}" ]; then
+    echo "Updating Codespaces URLs in configuration..."
+    node -e "
+    const fs = require('fs');
+    const baseConfig = JSON.parse(fs.readFileSync('semiont.json', 'utf-8'));
+    const envFile = 'environments/demo.json';
+    const config = JSON.parse(fs.readFileSync(envFile, 'utf-8'));
+    config.site.domain = '${SITE_DOMAIN}';
+    config.site.oauthAllowedDomains = ['${SITE_DOMAIN}', ...(baseConfig.site?.oauthAllowedDomains || [])];
+    config.services.frontend.url = '${FRONTEND_URL}';
+    config.services.backend.publicURL = '${BACKEND_URL}';
+    config.services.backend.corsOrigin = '${FRONTEND_URL}';
+    fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
+    "
+    echo "  ✓ URLs configured for Codespaces"
+fi
+
+cd ../.devcontainer
+echo "✓ Project directory initialized at $PROJECT_DIR"
