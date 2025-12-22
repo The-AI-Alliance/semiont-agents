@@ -71,20 +71,9 @@ npx tsx demo.ts <dataset> <command>
 - `annotate` - Detect citations, create annotations
 - `validate` - Fetch all resources, verify content, show checksums
 
-## Configuration
+**📚 [Dataset Configuration Guide](config/README.md)** - Learn how to add your own datasets
 
-```bash
-cp .env.example .env
-```
-
-**Environment variables:**
-
-```bash
-BACKEND_URL=http://localhost:4000
-FRONTEND_URL=http://localhost:3000
-AUTH_EMAIL=you@example.com
-DATA_DIR=./data/uploads
-```
+**🔧 [Semiont API Client Documentation](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client)** - Full API reference and usage examples
 
 ## Project Structure
 
@@ -158,78 +147,9 @@ demo/
    http://localhost:3000/en/know/resource/abc123...
 ```
 
-## API Client Usage
-
-```typescript
-import { SemiontApiClient, baseUrl, resourceUri } from '@semiont/api-client';
-
-const client = new SemiontApiClient({ baseUrl: baseUrl(BACKEND_URL) });
-
-// Authenticate
-await client.authenticateLocal(email(AUTH_EMAIL));
-
-// Create resource
-const { resource } = await client.createResource({
-  name: 'Document',
-  file: Buffer.from(content),
-  format: 'text/plain',
-  entityTypes: ['literature'],
-});
-
-// Create annotation
-await client.createAnnotation(resourceUri, {
-  motivation: 'linking',
-  target: {
-    source: resourceUri,
-    selector: { type: 'TextPositionSelector', start: 0, end: 4 }
-  },
-  body: [],
-});
-```
-
-## Adding Datasets
-
-Create `config/<dataset>/config.ts`:
-
-```typescript
-import type { DatasetConfig } from '../types';
-
-export const config: DatasetConfig = {
-  name: 'My Dataset',
-  entityType: 'article',
-  source: {
-    type: 'remote',
-    url: 'https://example.com/data.txt',
-  },
-  chunking: { enabled: true, mode: 'simple', targetSize: 5000 },
-  tableOfContents: { enabled: true, createLinks: true },
-};
-```
-
-Then run:
-
-```bash
-npx tsx demo.ts my-dataset download
-npx tsx demo.ts my-dataset load
-```
-
-See [config/README.md](config/README.md) for configuration options.
-
-## Troubleshooting
-
-**"User not found"** - Create account via frontend or use different email
-
-**"Local authentication not enabled"** - Set `ENABLE_LOCAL_AUTH=true` in backend `.env`
-
-**"401 Unauthorized"** - Token expired (8hr); re-run for fresh token
-
-**"Dataset not found"** - Check dataset name matches directory in `config/`
-
 ## Related Documentation
 
 - [Interactive UI Guide](INTERACTIVE.md) - Terminal UI details
-- [Config Guide](config/README.md) - Dataset configuration
-- [Semiont API Client](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client) - Client reference
 - [Main Semiont Repository](https://github.com/The-AI-Alliance/semiont) - Development and contributing
 
 ## Contributing
