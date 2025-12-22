@@ -35,7 +35,7 @@ print_error() {
 clear
 
 echo "=========================================="
-echo "   SEMIONT DEMO ENVIRONMENT SETUP"
+echo "   SEMIONT AGENTS DEMO SETUP"
 echo "=========================================="
 echo ""
 echo "Version: $SEMIONT_VERSION"
@@ -54,7 +54,7 @@ echo "------------------------------------------"
 echo ""
 
 # Navigate to workspace root
-cd /workspaces/semiont
+cd /workspaces/semiont-agents
 
 # Install Semiont CLI globally
 print_status "Installing @semiont/cli@$SEMIONT_VERSION globally..."
@@ -71,8 +71,8 @@ fi
 
 # Create project directory for Semiont workspace
 print_status "Creating project directory..."
-mkdir -p /workspaces/semiont/demo/project
-export SEMIONT_ROOT=/workspaces/semiont/demo/project
+mkdir -p /workspaces/semiont-agents/project
+export SEMIONT_ROOT=/workspaces/semiont-agents/project
 export SEMIONT_ENV=demo
 print_success "Project directory created: $SEMIONT_ROOT"
 
@@ -86,13 +86,13 @@ print_success "Project initialized"
 
 # Copy semiont.json configuration
 print_status "Configuring semiont.json..."
-cp /workspaces/semiont/demo/.devcontainer/semiont.json semiont.json
+cp /workspaces/semiont-agents/.devcontainer/semiont.json semiont.json
 print_success "semiont.json configured"
 
 # Copy and configure environment
 print_status "Configuring environment..."
 mkdir -p environments
-cp /workspaces/semiont/demo/.devcontainer/environments-demo.json environments/demo.json
+cp /workspaces/semiont-agents/.devcontainer/environments-demo.json environments/demo.json
 
 # Update URLs for Codespaces if running in GitHub Codespaces
 if [ -n "${CODESPACE_NAME:-}" ]; then
@@ -211,13 +211,13 @@ semiont useradd --email "$DEMO_EMAIL" --password "$DEMO_PASSWORD" --environment 
 
 # Install demo dependencies
 print_status "Installing demo dependencies..."
-cd /workspaces/semiont/demo
+cd /workspaces/semiont-agents
 npm install 2>&1 | grep -v "npm warn" | tail -5 || true
 print_success "Dependencies installed"
 
 # Save demo .env credentials
 print_status "Saving demo configuration..."
-cd /workspaces/semiont/demo
+cd /workspaces/semiont-agents
 
 # Use Codespaces URLs if available, otherwise localhost
 DEMO_BACKEND_URL="${BACKEND_URL:-http://localhost:4000}"
@@ -244,11 +244,11 @@ AUTH_PASSWORD=$DEMO_PASSWORD
 # NEO4J_PASSWORD=
 # NEO4J_DATABASE=
 EOF
-print_success "Demo configuration saved to demo/.env"
+print_success "Demo configuration saved to .env"
 
 echo ""
 echo "=========================================="
-echo "   ✅ DEMO ENVIRONMENT READY!"
+echo "   ✅ SEMIONT AGENTS DEMO READY!"
 echo "=========================================="
 echo ""
 echo "🌐 Frontend:  ${DEMO_FRONTEND_URL}"
@@ -264,13 +264,12 @@ echo "🎯 Quick Start:"
 echo ""
 echo "   1. Visit ${DEMO_FRONTEND_URL} and login"
 echo "   2. Run interactive demo:"
-echo "      cd /workspaces/semiont/demo"
+echo "      cd /workspaces/semiont-agents"
 echo "      npm run demo:interactive"
 echo ""
 echo "📖 Documentation:"
 echo "   • Demo guide:      cat README.md"
 echo "   • Container info:  cat CONTAINER.md"
-echo "   • Datasets:        cat datasets/README.md"
 echo ""
 echo "🔧 Useful Commands:"
 echo "   • Check services:  docker compose ps"

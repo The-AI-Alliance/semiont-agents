@@ -1,21 +1,23 @@
-# Semiont Demo
+# Semiont Agents Demo
 
-Configuration-driven demonstration of Semiont SDK features: document processing, chunking, annotations, and validation.
+Configuration-driven demonstration of [Semiont](https://github.com/The-AI-Alliance/semiont) SDK features: document processing, chunking, annotations, and validation.
 
-## Try in Codespaces
+> **About Semiont**: A semantic annotation and knowledge extraction platform developed by [The AI Alliance](https://thealliance.ai/). This demo repository showcases Semiont's capabilities using published artifacts. For development and contributing, see the [main Semiont repository](https://github.com/The-AI-Alliance/semiont).
 
-Launch a complete demo environment with one click (no installation required):
+## Try in GitHub Codespaces
 
-[![Open Demo in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/The-AI-Alliance/semiont?devcontainer_path=demo%2F.devcontainer%2Fdevcontainer.json)
+Launch the complete Semiont Agents Demo environment with one click (no installation required):
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/The-AI-Alliance/semiont-agents)
 
 Includes:
 
 - Semiont frontend, backend, and database (all pre-configured)
 - Demo account with sample data
-- Interactive terminal UI
+- Interactive terminal UI for dataset operations
 - Ready to run in ~2 minutes
 
-See [.devcontainer/README.md](.devcontainer/README.md) for details.
+See [.devcontainer/README.md](.devcontainer/README.md) for container details.
 
 ## Quick Start
 
@@ -34,17 +36,7 @@ npx tsx demo.ts citizens_united annotate
 
 ## Prerequisites
 
-### Running Backend Required
-
-1. Start backend (see [Local Development Guide](../docs/LOCAL-DEVELOPMENT.md))
-2. Verify backend at `http://localhost:4000`
-3. Create user account (via frontend or local auth)
-
-**Requirements:**
-
-- Node.js 18+
-- Backend with `ENABLE_LOCAL_AUTH=true` (default in dev)
-- Valid user account
+Everything is pre-configured when using GitHub Codespaces! Just click the badge above.
 
 ## Modes
 
@@ -237,9 +229,18 @@ See [config/README.md](config/README.md) for configuration options.
 
 - [Interactive UI Guide](INTERACTIVE.md) - Terminal UI details
 - [Config Guide](config/README.md) - Dataset configuration
-- [Local Development](../docs/LOCAL-DEVELOPMENT.md) - Backend setup
-- [API Client](../packages/api-client/README.md) - Client reference
+- [Semiont API Client](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client) - Client reference
+- [Main Semiont Repository](https://github.com/The-AI-Alliance/semiont) - Development and contributing
+
+## Contributing
+
+This is a demo repository showcasing Semiont. For contributions to Semiont itself, please see the [main Semiont repository](https://github.com/The-AI-Alliance/semiont).
+
+For improvements to this demo:
+- Issues and pull requests are welcome
+- Please follow our [Code of Conduct](CODE_OF_CONDUCT.md)
+- See [LICENSE](LICENSE) for licensing information
 
 ## License
 
-Apache-2.0
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

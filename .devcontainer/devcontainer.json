@@ -1,11 +1,11 @@
 {
-  "name": "Semiont Demo Environment",
+  "name": "Semiont Agents Demo",
 
   "dockerComposeFile": "docker-compose.yml",
   "service": "demo-workspace",
-  "workspaceFolder": "/workspaces/semiont/demo",
+  "workspaceFolder": "/workspaces/semiont-agents",
 
-  "initializeCommand": "bash demo/.devcontainer/init-env.sh",
+  "initializeCommand": "bash .devcontainer/init-env.sh",
   "postCreateCommand": "bash .devcontainer/setup-demo.sh",
 
   "forwardPorts": [3000, 4000, 5432],
@@ -31,13 +31,12 @@
     "codespaces": {
       "openFiles": [
         "README.md",
-        "CONTAINER.md",
-        "datasets/README.md"
+        "CONTAINER.md"
       ],
       "settings": {
         "workbench.sideBar.visible": true,
         "workbench.startupView": "workbench.explorer.fileView",
-        "terminal.integrated.cwd": "/workspaces/semiont/demo"
+        "terminal.integrated.cwd": "/workspaces/semiont-agents"
       }
     },
     "vscode": {
@@ -49,7 +48,7 @@
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.cwd": "/workspaces/semiont/demo",
+        "terminal.integrated.cwd": "/workspaces/semiont-agents",
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "typescript.updateImportsOnFileMove.enabled": "always",

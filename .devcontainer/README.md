@@ -1,23 +1,25 @@
-# Semiont Demo Devcontainer
+# Semiont Agents Demo Devcontainer
 
-Production-ready demo environment that uses published Semiont containers and packages.
+Production-ready demo environment that uses published [Semiont](https://github.com/The-AI-Alliance/semiont) containers and packages.
+
+> **About Semiont**: A semantic annotation and knowledge extraction platform developed by [The AI Alliance](https://thealliance.ai/). This demo repository showcases Semiont's capabilities using published artifacts. For development and contributing, see the [main Semiont repository](https://github.com/The-AI-Alliance/semiont).
 
 ## Quick Start
 
 ### GitHub Codespaces (Recommended)
 
-Click to launch:
+Click to launch the Semiont Agents Demo:
 
-[![Open Demo in Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/The-AI-Alliance/semiont?devcontainer_path=demo%2F.devcontainer%2Fdevcontainer.json)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/The-AI-Alliance/semiont-agents)
 
 ### Local Development
 
 ```bash
-# Clone repository
-git clone https://github.com/The-AI-Alliance/semiont.git
-cd semiont/demo
+# Clone this demo repository
+git clone https://github.com/The-AI-Alliance/semiont-agents.git
+cd semiont-agents
 
-# Open in VS Code with devcontainers extension
+# Open in VS Code with Dev Containers extension
 code .
 
 # When prompted, select "Reopen in Container"
@@ -41,7 +43,7 @@ All components are **published artifacts** (not built from source):
   - Command-line tool (globally installed)
 
 - **@semiont/api-client** (`0.2.0`)
-  - TypeScript SDK (in demo/node_modules)
+  - TypeScript SDK (in node_modules)
 
 ## Setup Process
 
@@ -51,7 +53,7 @@ After container creation (~1-2 minutes):
 2. **CLI installed** - `@semiont/cli@0.2.0` globally
 3. **Dependencies installed** - Demo scripts and API client
 4. **Demo user created** - Email: `demo@example.com`, Password: `demo123`
-5. **Configuration saved** - Credentials stored in `demo/.env`
+5. **Configuration saved** - Credentials stored in `.env`
 
 ## Usage
 
@@ -77,7 +79,7 @@ Full-screen terminal interface for running demo commands.
 # Check CLI version
 semiont --version
 
-# Run demo scripts (from demo/ directory)
+# Run demo scripts
 npx tsx demo.ts citizens_united download
 npx tsx demo.ts citizens_united load
 npx tsx demo.ts citizens_united annotate
@@ -87,13 +89,13 @@ npx tsx demo.ts citizens_united annotate
 
 ### Environment Variables
 
-Configuration is in `demo/.env` (auto-created during setup).
+Configuration is in `.env` (auto-created during setup).
 
 To customize:
 
 ```bash
 # Edit environment variables
-nano demo/.env
+nano .env
 
 # Restart services to apply changes
 docker compose restart backend frontend
@@ -248,28 +250,32 @@ Docker Compose manages four containers:
 ### Volume Mounts
 
 - **postgres_data** - Persistent database storage
-- **workspace** - Source code mounted at `/workspaces/semiont`
+- **backend_data** - Backend data directory
+- **workspace** - Demo repository mounted at `/workspaces/semiont-agents`
 
-## Comparison: Demo vs Development
+## Comparison: Semiont Agents Demo vs Semiont Development
 
-| Aspect | Demo Container | Dev Container |
-|--------|---------------|---------------|
-| **Purpose** | Explore features | Build & contribute |
+This Semiont Agents Demo container vs the [main Semiont development container](https://github.com/The-AI-Alliance/semiont):
+
+| Aspect | Semiont Agents Demo (this repo) | Semiont Development |
+|--------|----------------------------------|---------------------|
+| **Repository** | `semiont-agents` | `semiont` |
+| **Purpose** | Explore Semiont features | Build & contribute to Semiont |
 | **Build Time** | ~1-2 minutes | ~5-7 minutes |
-| **Source** | Published images | Local source code |
-| **Packages** | npm registry | Built locally |
-| **Workspace** | `/workspaces/semiont/demo` | `/workspace` |
-| **Customization** | Config only | Full source access |
-| **Best For** | Users, demos | Contributors |
+| **Source** | Published Docker images | Local source code |
+| **Packages** | From npm registry | Built locally |
+| **Workspace** | `/workspaces/semiont-agents` | `/workspace` |
+| **Customization** | Configuration only | Full source access |
+| **Best For** | Users, demos, learning | Contributors, developers |
 
-## Future: Standalone Repository
+## About This Repository
 
-This demo environment is designed to be split into a separate `semiont-demo` repository:
+This is the standalone Semiont Agents Demo repository for [Semiont](https://github.com/The-AI-Alliance/semiont), showcasing its semantic annotation and knowledge extraction capabilities.
 
-### Planned Structure
+### Repository Structure
 
-```
-semiont-demo/
+```text
+semiont-agents/
 ├── .devcontainer/
 ├── datasets/
 ├── docker-compose.yml
