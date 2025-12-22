@@ -54,7 +54,7 @@ Full-screen terminal interface with three panels:
 
 **Controls:** `↑/↓` or `j/k` (navigate), `Enter` (execute), `Tab` (cycle focus), `q` (quit)
 
-See [INTERACTIVE.md](INTERACTIVE.md) for details.
+See [docs/INTERACTIVE.md](docs/INTERACTIVE.md) for details.
 
 ### CLI Mode
 
@@ -93,32 +93,7 @@ demo/
     └── private/             # Private datasets (gitignored)
 ```
 
-## Workflow
-
-### Download Phase
-
-1. Fetch from Cornell LII, arXiv, Hugging Face, etc.
-2. Cache raw content in `data/tmp/<dataset>/`
-
-### Load Phase
-
-1. Read from local cache
-2. Format and process text
-3. Chunk document (if configured)
-4. Upload chunks to backend
-5. Create Table of Contents (if chunked)
-6. Link ToC references to documents
-
-### Annotate Phase
-
-1. Detect patterns (e.g., legal citations)
-2. Create annotations via API
-
-### Validate Phase
-
-1. Fetch all resources (ToC, chunks, documents)
-2. Calculate SHA-256 checksums
-3. Show media types and text previews
+**📖 [Workflow Guide](docs/WORKFLOW.md)** - Detailed explanation of the four-phase processing workflow
 
 ## Example Output
 
@@ -149,7 +124,10 @@ demo/
 
 ## Related Documentation
 
-- [Interactive UI Guide](INTERACTIVE.md) - Terminal UI details
+- [Workflow Guide](docs/WORKFLOW.md) - Four-phase processing workflow
+- [Interactive UI Guide](docs/INTERACTIVE.md) - Terminal UI details
+- [Dataset Configuration Guide](config/README.md) - Adding and configuring datasets
+- [Container Documentation](docs/CONTAINER.md) - Devcontainer setup and details
 - [Main Semiont Repository](https://github.com/The-AI-Alliance/semiont) - Development and contributing
 
 ## Contributing

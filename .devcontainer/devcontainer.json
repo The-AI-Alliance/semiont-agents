@@ -31,7 +31,7 @@
     "codespaces": {
       "openFiles": [
         "README.md",
-        "CONTAINER.md"
+        "docs/CONTAINER.md"
       ],
       "settings": {
         "workbench.sideBar.visible": true,
