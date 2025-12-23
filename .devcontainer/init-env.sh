@@ -56,8 +56,14 @@ log "  Cleaning npm cache..."
 npm cache clean --force 2>&1 | head -5 || true
 log "  Cache cleaned, installing package..."
 npm install -g @semiont/cli 2>&1 | grep -v "npm warn" || true
-SEMIONT_CLI_VERSION=$(semiont --version 2>&1 | head -1 || echo "unknown")
-log "  ✓ CLI installed: $SEMIONT_CLI_VERSION"
+
+# Show the package version from npm
+SEMIONT_PACKAGE_VERSION=$(npm list -g @semiont/cli --depth=0 2>/dev/null | grep @semiont/cli | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
+log "  ✓ Package installed: @semiont/cli@$SEMIONT_PACKAGE_VERSION"
+
+# Try to run the CLI to get its reported version
+SEMIONT_CLI_VERSION=$(semiont --version 2>&1 | head -1 || echo "CLI command failed")
+log "  CLI version output: $SEMIONT_CLI_VERSION"
 
 # Pre-initialize project directory for backend container
 # This must happen BEFORE docker-compose starts the backend
