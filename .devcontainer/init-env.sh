@@ -6,7 +6,7 @@
 set -euo pipefail
 
 # Semiont version to use for all artifacts
-SEMIONT_VERSION="0.2.10"
+SEMIONT_VERSION="0.2.11"
 
 # Helper for timestamped logging
 log() {
