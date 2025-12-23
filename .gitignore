@@ -12,6 +12,9 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 
+# Generated project directory (created by init-env.sh)
+project/
+
 # Build outputs
 packages/*/dist/
 dist/
