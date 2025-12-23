@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
-  "postCreateCommand": "bash .devcontainer/setup-demo.sh",
+  "postCreateCommand": "echo 'Skipping setup-demo.sh for debugging - run manually: bash .devcontainer/setup-demo.sh'",
 
   "forwardPorts": [3000, 4000, 5432],
 

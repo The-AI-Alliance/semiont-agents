@@ -143,24 +143,44 @@ fi
 
 # Wait for backend service to be healthy
 print_status "Waiting for backend service to start..."
-MAX_WAIT=120
+print_status "Checking if backend container is running..."
+cd /workspaces/semiont-agents/.devcontainer || exit 1
+docker compose ps backend || true
+cd /workspaces/semiont-agents || exit 1
+
+MAX_WAIT=180  # Increased from 120s to account for start_period
 WAITED=0
 while [ $WAITED -lt $MAX_WAIT ]; do
+    # Try health check
     if curl -sf http://localhost:4000/health > /dev/null 2>&1; then
         print_success "Backend is healthy"
         break
     fi
+
+    # Show progress and diagnostic info
+    if [ $((WAITED % 20)) -eq 0 ]; then
+        echo "  Still waiting... (${WAITED}s / ${MAX_WAIT}s)"
+        cd /workspaces/semiont-agents/.devcontainer || exit 1
+        docker compose ps backend | grep -v "^NAME" || true
+        cd /workspaces/semiont-agents || exit 1
+    fi
+
     sleep 2
     WAITED=$((WAITED + 2))
-    if [ $((WAITED % 10)) -eq 0 ]; then
-        echo "  Still waiting... (${WAITED}s)"
-    fi
 done
 
 if [ $WAITED -ge $MAX_WAIT ]; then
     print_error "Backend failed to start within ${MAX_WAIT}s"
     echo ""
-    echo "Check logs with: docker compose logs backend"
+    print_error "Backend container status:"
+    cd /workspaces/semiont-agents/.devcontainer || exit 1
+    docker compose ps backend || true
+    echo ""
+    print_error "Last 50 lines of backend logs:"
+    docker compose logs --tail=50 backend || true
+    cd /workspaces/semiont-agents || exit 1
+    echo ""
+    echo "Check full logs with: docker compose logs backend"
     exit 1
 fi
 
