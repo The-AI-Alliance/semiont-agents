@@ -43,6 +43,12 @@ EOF
     echo "Created .env with localhost URLs"
 fi
 
+# Install @semiont/cli globally to get 'semiont' command
+echo "Installing @semiont/cli..."
+npm cache clean --force 2>&1 | head -5 || true
+npm install -g @semiont/cli 2>&1 | grep -v "npm warn" || true
+echo "  ✓ CLI installed"
+
 # Pre-initialize project directory for backend container
 # This must happen BEFORE docker-compose starts the backend
 echo "Initializing project directory for backend container..."
@@ -52,9 +58,11 @@ mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
 
 # Run semiont init to create initial project structure
-# Clean npx cache first to ensure fresh package download
 echo "Running semiont init..."
-npm cache clean --force && npx @semiont/cli init
+semiont init 2>&1 || {
+    echo "  ✗ semiont init failed - check logs above"
+    exit 1
+}
 echo "  ✓ Project initialized with semiont init"
 
 # Overwrite with our templates
