@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
-  "postCreateCommand": "echo 'Skipping setup-demo.sh for debugging - run manually: bash .devcontainer/setup-demo.sh'",
+  "postCreateCommand": "echo '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️  SETUP REQUIRED\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nTo complete setup, run:\n\n    bash .devcontainer/setup-demo.sh\n\nThis will:\n  • Install workspace dependencies (npm install)\n  • Create demo user account\n  • Configure environment\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'",
 
   "forwardPorts": [3000, 4000, 5432],
 
