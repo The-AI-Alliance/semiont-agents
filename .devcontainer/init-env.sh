@@ -80,7 +80,7 @@ cd "$PROJECT_DIR"
 
 # Run semiont init to create initial project structure
 log "Running semiont init..."
-semiont init 2>&1 || {
+semiont init --force 2>&1 || {
     log "  ✗ semiont init failed - check logs above"
     exit 1
 }
