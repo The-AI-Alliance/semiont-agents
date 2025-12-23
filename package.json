@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@semiont/api-client": "*",
+    "@semiont/cli": "^0.2.2",
     "blessed": "^0.1.81",
     "commander": "^12.1.0"
   },

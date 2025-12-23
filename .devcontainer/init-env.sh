@@ -7,8 +7,6 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.0}"
-
 # Check if running in Codespaces
 if [ -n "${CODESPACE_NAME:-}" ]; then
     echo "Detected Codespaces environment: ${CODESPACE_NAME}"
@@ -23,7 +21,6 @@ NEXT_PUBLIC_API_URL=${BACKEND_URL}
 NEXTAUTH_URL=${FRONTEND_URL}
 NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=${SITE_DOMAIN}
-SEMIONT_VERSION=${SEMIONT_VERSION}
 EOF
 
     echo "Created .env with Codespaces URLs"
@@ -41,16 +38,10 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 NEXTAUTH_URL=http://localhost:3000
 NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=
-SEMIONT_VERSION=${SEMIONT_VERSION}
 EOF
 
     echo "Created .env with localhost URLs"
 fi
-
-# Install @semiont/cli to run semiont init
-echo "Installing @semiont/cli@latest..."
-npm install -g "@semiont/cli@latest"
-echo "  ✓ CLI installed"
 
 # Pre-initialize project directory for backend container
 # This must happen BEFORE docker-compose starts the backend
@@ -61,8 +52,9 @@ mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
 
 # Run semiont init to create initial project structure
+# Clean npx cache first to ensure fresh package download
 echo "Running semiont init..."
-npx --yes "@semiont/cli@latest" init
+npm cache clean --force && npx @semiont/cli init
 echo "  ✓ Project initialized with semiont init"
 
 # Overwrite with our templates
