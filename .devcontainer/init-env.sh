@@ -47,12 +47,6 @@ EOF
     echo "Created .env with localhost URLs"
 fi
 
-# Install Node.js 22.x
-echo "Installing Node.js 22.x..."
-curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -
-sudo apt-get install -y nodejs
-echo "  ✓ Node.js $(node --version) installed"
-
 # Install @semiont/cli to run semiont init
 echo "Installing @semiont/cli@latest..."
 npm install -g "@semiont/cli@latest"
