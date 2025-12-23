@@ -5,11 +5,18 @@
 
 set -euo pipefail
 
+# Helper for timestamped logging
+log() {
+    echo "[$(date '+%H:%M:%S')] $1"
+}
+
 cd "$(dirname "$0")"
+
+log "Starting init-env.sh"
 
 # Check if running in Codespaces
 if [ -n "${CODESPACE_NAME:-}" ]; then
-    echo "Detected Codespaces environment: ${CODESPACE_NAME}"
+    log "Detected Codespaces environment: ${CODESPACE_NAME}"
 
     FRONTEND_URL="https://${CODESPACE_NAME}-3000.app.github.dev"
     BACKEND_URL="https://${CODESPACE_NAME}-4000.app.github.dev"
@@ -23,9 +30,9 @@ NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=${SITE_DOMAIN}
 EOF
 
-    echo "Created .env with Codespaces URLs"
+    log "Created .env with Codespaces URLs"
 else
-    echo "Local environment detected"
+    log "Local environment detected"
 
     FRONTEND_URL="http://localhost:3000"
     BACKEND_URL="http://localhost:4000"
@@ -40,40 +47,43 @@ NEXT_PUBLIC_SITE_NAME=Semiont Demo
 NEXT_PUBLIC_OAUTH_ALLOWED_DOMAINS=
 EOF
 
-    echo "Created .env with localhost URLs"
+    log "Created .env with localhost URLs"
 fi
 
 # Install @semiont/cli globally to get 'semiont' command
-echo "Installing @semiont/cli..."
+log "Installing @semiont/cli..."
+log "  Cleaning npm cache..."
 npm cache clean --force 2>&1 | head -5 || true
+log "  Cache cleaned, installing package..."
 npm install -g @semiont/cli 2>&1 | grep -v "npm warn" || true
-echo "  ✓ CLI installed"
+SEMIONT_CLI_VERSION=$(semiont --version 2>&1 | head -1 || echo "unknown")
+log "  ✓ CLI installed: $SEMIONT_CLI_VERSION"
 
 # Pre-initialize project directory for backend container
 # This must happen BEFORE docker-compose starts the backend
-echo "Initializing project directory for backend container..."
+log "Initializing project directory for backend container..."
 
 PROJECT_DIR="../project"
 mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
 
 # Run semiont init to create initial project structure
-echo "Running semiont init..."
+log "Running semiont init..."
 semiont init 2>&1 || {
-    echo "  ✗ semiont init failed - check logs above"
+    log "  ✗ semiont init failed - check logs above"
     exit 1
 }
-echo "  ✓ Project initialized with semiont init"
+log "  ✓ Project initialized with semiont init"
 
 # Overwrite with our templates
-echo "Copying configuration templates..."
+log "Copying configuration templates..."
 cp ../.devcontainer/semiont.json semiont.json
 cp ../.devcontainer/environments-demo.json environments/demo.json
-echo "  ✓ Templates copied"
+log "  ✓ Templates copied"
 
 # Update URLs in demo.json for the detected environment
 if [ -n "${CODESPACE_NAME:-}" ]; then
-    echo "Updating Codespaces URLs in configuration..."
+    log "Updating Codespaces URLs in configuration..."
     node -e "
     const fs = require('fs');
     const baseConfig = JSON.parse(fs.readFileSync('semiont.json', 'utf-8'));
@@ -86,8 +96,9 @@ if [ -n "${CODESPACE_NAME:-}" ]; then
     config.services.backend.corsOrigin = '${FRONTEND_URL}';
     fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
     "
-    echo "  ✓ URLs configured for Codespaces"
+    log "  ✓ URLs configured for Codespaces"
 fi
 
 cd ../.devcontainer
-echo "✓ Project directory initialized at $PROJECT_DIR"
+log "✓ Project directory initialized at $PROJECT_DIR"
+log "init-env.sh completed successfully"
