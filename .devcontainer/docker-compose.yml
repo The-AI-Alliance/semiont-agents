@@ -18,7 +18,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: semiont_demo
+      POSTGRES_DB: semiont
       POSTGRES_USER: semiont
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-semiont}
     volumes:
@@ -45,8 +45,6 @@ services:
       # Semiont configuration
       SEMIONT_ROOT: /workspace/project
       SEMIONT_ENV: demo
-      # Database
-      DATABASE_URL: postgresql://semiont:${POSTGRES_PASSWORD:-semiont}@postgres:5432/semiont_demo
       # JWT
       JWT_SECRET: ${JWT_SECRET:-demo-jwt-secret-minimum-32-characters-long}
       # Server
