@@ -215,23 +215,36 @@ print_status "Creating demo admin user..."
 
 # Run useradd inside backend container
 # The workspace container shares Docker socket with host via docker-outside-of-docker feature
-cd /workspaces/semiont-agents/.devcontainer
 
-if command -v docker &> /dev/null; then
-    docker compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
-        print_error "Admin user creation failed"
-        exit 1
-    }
-elif command -v docker-compose &> /dev/null; then
-    docker-compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
-        print_error "Admin user creation failed"
-        exit 1
-    }
-else
+if ! command -v docker &> /dev/null; then
     print_error "Docker CLI not available in workspace container"
     print_error "Cannot run semiont useradd inside backend container"
     exit 1
 fi
+
+# Find the backend container name
+# Look for container with image containing "semiont-backend" and running state
+BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
+
+if [ -z "$BACKEND_CONTAINER" ]; then
+    # Fallback: try to find by name pattern
+    BACKEND_CONTAINER=$(docker ps --filter "name=backend" --format "{{.Names}}" | head -1)
+fi
+
+if [ -z "$BACKEND_CONTAINER" ]; then
+    print_error "Cannot find running backend container"
+    print_error "Tried: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}"
+    docker ps
+    exit 1
+fi
+
+print_status "Found backend container: $BACKEND_CONTAINER"
+
+# Run useradd inside the backend container
+docker exec -i "$BACKEND_CONTAINER" sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+    print_error "Admin user creation failed"
+    exit 1
+}
 
 print_success "Demo admin user created: $DEMO_EMAIL"
 
@@ -289,12 +302,16 @@ echo "   Role:     Administrator"
 echo ""
 echo "💾 Credentials saved to: /workspaces/semiont-agents/.env"
 echo ""
-echo "🎯 Quick Start:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "🎯 NEXT STEP: Run the Interactive Demo"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "   1. Visit ${DEMO_FRONTEND_URL} and login with admin credentials"
-echo "   2. Run interactive demo:"
-echo "      cd /workspaces/semiont-agents"
-echo "      npm run demo:interactive"
+echo "    npm run demo:interactive"
+echo ""
+echo "This will guide you through creating and managing"
+echo "agents with the Semiont framework."
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "📖 Documentation:"
 echo "   • Demo guide:      cat README.md"
@@ -307,6 +324,4 @@ echo "   • Check services:  docker compose ps"
 echo "   • View logs:       docker compose logs -f"
 echo "   • Restart backend: docker compose restart backend"
 echo "   • CLI commands:    semiont --help"
-echo ""
-echo "🚀 Semiont $SEMIONT_VERSION is ready for exploration!"
 echo ""

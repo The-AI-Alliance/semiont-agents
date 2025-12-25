@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
-  "postCreateCommand": "echo '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n⚠️  SETUP REQUIRED\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nTo complete setup, run:\n\n    bash .devcontainer/setup-demo.sh\n\nThis will:\n  • Install workspace dependencies (npm install)\n  • Create demo user account\n  • Configure environment\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'",
+  "postCreateCommand": "echo '\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n   Welcome to Semiont Agents Demo!\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYour devcontainer is ready. To complete setup:\n\n    bash .devcontainer/setup-demo.sh\n\nThis will:\n  • Wait for backend and frontend services to start\n  • Create a demo admin account with random credentials\n  • Install workspace dependencies\n  • Save credentials to .env file\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'",
 
   "forwardPorts": [3000, 4000, 5432],
 
