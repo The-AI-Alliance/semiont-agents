@@ -294,14 +294,21 @@ UPDATED_AT="$CREATED_AT"
 # Create admin user in database
 print_status "Inserting admin user into database..."
 
+# Extract domain from email for domain-based access control
+DEMO_DOMAIN=$(echo "$DEMO_EMAIL" | cut -d'@' -f2)
+
+# Generate a CUID-style ID for the user
+DEMO_USER_ID="demo_$(openssl rand -hex 12)"
+
 # Use ON CONFLICT to make this idempotent
 # Disable pipefail temporarily to capture error output
 set +e
 
 # Build SQL command on a single line to avoid escaping issues with multiline strings
 # Use printf to properly escape the bcrypt hash which contains $ characters
+# Table name is "users" (lowercase), columns: id, email, passwordHash, name, provider, providerId, domain, isAdmin, isActive, createdAt, updatedAt
 SQL_RESULT=$(docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c \
-"INSERT INTO \"User\" (email, password, name, role, \"createdAt\", \"updatedAt\") VALUES ('$DEMO_EMAIL', E'$(printf '%s' "$HASHED_PASSWORD" | sed "s/'/''/g")', 'Demo Admin', 'ADMIN', '$CREATED_AT', '$UPDATED_AT') ON CONFLICT (email) DO NOTHING RETURNING email;" 2>&1)
+"INSERT INTO users (id, email, \"passwordHash\", name, provider, \"providerId\", domain, \"isAdmin\", \"isActive\", \"createdAt\", \"updatedAt\") VALUES ('$DEMO_USER_ID', '$DEMO_EMAIL', E'$(printf '%s' "$HASHED_PASSWORD" | sed "s/'/''/g")', 'Demo Admin', 'password', '$DEMO_EMAIL', '$DEMO_DOMAIN', true, true, '$CREATED_AT', '$UPDATED_AT') ON CONFLICT (email) DO NOTHING RETURNING email;" 2>&1)
 SQL_EXIT_CODE=$?
 set -e
 
