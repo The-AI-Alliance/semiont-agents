@@ -261,10 +261,14 @@ ON CONFLICT (email) DO NOTHING
 RETURNING email;
 " 2>&1)
 
+# Debug: show what we got back
+echo "SQL_RESULT: '$SQL_RESULT'" >&2
+
 if echo "$SQL_RESULT" | grep -q "$DEMO_EMAIL"; then
     print_success "Demo admin user created: $DEMO_EMAIL"
-elif echo "$SQL_RESULT" | grep -q "ERROR"; then
-    print_error "Database error: $SQL_RESULT"
+elif echo "$SQL_RESULT" | grep -qi "ERROR"; then
+    print_error "Database error:"
+    echo "$SQL_RESULT"
     exit 1
 else
     print_warning "User already exists (this is fine)"
