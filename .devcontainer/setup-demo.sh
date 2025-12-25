@@ -6,8 +6,12 @@ exec 2>&1
 export PYTHONUNBUFFERED=1
 
 SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.14}"
-DEMO_EMAIL="demo@example.com"
-DEMO_PASSWORD="demo123"
+
+# Generate random demo credentials for this environment
+# Uses random hex string for uniqueness (not guessable)
+RANDOM_ID=$(openssl rand -hex 8)
+DEMO_EMAIL="dev-${RANDOM_ID}@example.com"
+DEMO_PASSWORD=$(openssl rand -base64 16)
 
 # Colors
 GREEN='\033[0;32m'
@@ -191,43 +195,28 @@ if [ $WAITED -ge $MAX_WAIT ]; then
     print_warning "It may still be starting - check http://localhost:3000"
 fi
 
-# Provision services using Semiont CLI
-print_status "Provisioning services with Semiont CLI..."
-cd $SEMIONT_ROOT || exit 1
+# Create demo admin user using semiont CLI inside backend container
+#
+# APPROACH: Run semiont useradd inside the backend container.
+# The backend container already has @semiont/cli and @semiont/backend installed,
+# along with the Prisma client. This eliminates the dependency between @semiont/cli
+# and @semiont/backend in the workspace container.
+#
+# The backend container has access to:
+# - @semiont/cli (with useradd command)
+# - @semiont/backend (with Prisma schema and client)
+# - /workspace/project volume (for environments/demo.json)
+# - Database connection via postgres hostname
+#
+print_status "Creating demo admin user..."
+cd /workspaces/semiont-agents
 
-# Provision backend service
-semiont provision --service backend --environment demo || {
-    print_warning "Backend provisioning failed or not needed for containers - continuing"
+docker compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+    print_error "Admin user creation failed"
+    exit 1
 }
-print_success "Backend provisioned"
 
-# Provision frontend service
-semiont provision --service frontend --environment demo || {
-    print_warning "Frontend provisioning failed or not needed for containers - continuing"
-}
-print_success "Frontend provisioned"
-
-# Create demo user using CLI
-print_status "Creating demo user with Semiont CLI..."
-cd $SEMIONT_ROOT || exit 1
-
-semiont useradd --email "$DEMO_EMAIL" --password "$DEMO_PASSWORD" --environment demo || {
-    print_warning "User creation via CLI failed, trying direct API call..."
-
-    # Fallback to direct API call
-    HTTP_CODE=$(curl -s -w "%{http_code}" -o /tmp/register-response.txt \
-      -X POST http://localhost:4000/api/auth/register \
-      -H "Content-Type: application/json" \
-      -d "{\"email\":\"$DEMO_EMAIL\",\"password\":\"$DEMO_PASSWORD\",\"name\":\"Demo User\"}")
-
-    if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
-        print_success "Demo user created via API"
-    elif [ "$HTTP_CODE" = "409" ] || [ "$HTTP_CODE" = "400" ]; then
-        print_warning "Demo user already exists (this is fine)"
-    else
-        print_warning "User creation returned HTTP $HTTP_CODE"
-    fi
-}
+print_success "Demo admin user created: $DEMO_EMAIL"
 
 # Install demo dependencies
 print_status "Installing demo dependencies..."
@@ -273,16 +262,19 @@ echo "=========================================="
 echo ""
 echo "🌐 Frontend:  ${DEMO_FRONTEND_URL}"
 echo "🔌 Backend:   ${DEMO_BACKEND_URL}"
-echo "📊 Database:  postgresql://semiont:semiont@postgres:5432/semiont_demo"
+echo "📊 Database:  postgresql://semiont:semiont@postgres:5432/semiont"
 echo "📁 Project:   $SEMIONT_ROOT"
 echo ""
-echo "👤 Demo Account:"
+echo "👤 Demo Admin Account:"
 echo "   Email:    $DEMO_EMAIL"
 echo "   Password: $DEMO_PASSWORD"
+echo "   Role:     Administrator"
+echo ""
+echo "💾 Credentials saved to: /workspaces/semiont-agents/.env"
 echo ""
 echo "🎯 Quick Start:"
 echo ""
-echo "   1. Visit ${DEMO_FRONTEND_URL} and login"
+echo "   1. Visit ${DEMO_FRONTEND_URL} and login with admin credentials"
 echo "   2. Run interactive demo:"
 echo "      cd /workspaces/semiont-agents"
 echo "      npm run demo:interactive"
