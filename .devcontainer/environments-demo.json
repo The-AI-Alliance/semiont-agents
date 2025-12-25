@@ -33,18 +33,18 @@
     },
     "database": {
       "platform": {
-        "type": "container"
+        "type": "external"
       },
       "type": "postgres",
       "name": "postgres",
-      "host": "postgres",
+      "host": "localhost",
       "port": 5432,
       "environment": {
-        "POSTGRES_DB": "semiont_demo",
+        "POSTGRES_DB": "semiont",
         "POSTGRES_USER": "semiont",
         "POSTGRES_PASSWORD": "semiont"
       },
-      "description": "PostgreSQL database in Docker Compose"
+      "description": "PostgreSQL database managed by docker-compose"
     },
     "graph": {
       "platform": {
