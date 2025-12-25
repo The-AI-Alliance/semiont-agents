@@ -197,8 +197,21 @@ MIGRATION_RESULT=$(docker exec "$BACKEND_CONTAINER" npx prisma migrate deploy 2>
 MIGRATION_EXIT=$?
 set -e
 
+# Always show migration output for debugging
+echo "Migration output:"
+echo "$MIGRATION_RESULT"
+echo ""
+
 if [ $MIGRATION_EXIT -eq 0 ]; then
-    print_success "Database migrations completed"
+    # Check if migrations were actually applied
+    if echo "$MIGRATION_RESULT" | grep -qi "No pending migrations"; then
+        print_success "Database schema is up to date"
+    elif echo "$MIGRATION_RESULT" | grep -qi "migration.*applied\|migration.*ran"; then
+        print_success "Database migrations completed"
+    else
+        print_warning "Migration command succeeded but output unclear"
+        print_warning "Please verify database schema manually"
+    fi
 else
     print_error "Migration failed with exit code $MIGRATION_EXIT:"
     echo "$MIGRATION_RESULT"
