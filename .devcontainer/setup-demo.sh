@@ -210,7 +210,7 @@ fi
 #   3. Proper admin user creation endpoint in the backend API
 #
 # For now, we:
-#   1. Use backend container's Node.js to hash the password with bcrypt
+#   1. Install bcryptjs in workspace to hash the password
 #   2. Execute SQL INSERT directly in postgres container
 #   3. Handle duplicate user errors gracefully for idempotency
 #
@@ -229,20 +229,17 @@ fi
 
 print_status "Found postgres container: $POSTGRES_CONTAINER"
 
-# Find backend container for password hashing
-BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
+# Install bcryptjs for password hashing (lightweight, pure JS)
+print_status "Installing bcryptjs for password hashing..."
+npm install --no-save bcryptjs 2>&1 | grep -v "npm warn" | tail -3 || true
 
-if [ -z "$BACKEND_CONTAINER" ]; then
-    print_error "Could not find backend container"
-    exit 1
-fi
-
-# Hash password using backend container's bcrypt
+# Hash password using bcryptjs
 print_status "Hashing password with bcrypt..."
-HASHED_PASSWORD=$(docker exec "$BACKEND_CONTAINER" node -e "
-const bcrypt = require('bcrypt');
-bcrypt.hash('$DEMO_PASSWORD', 10).then(hash => console.log(hash));
-" 2>/dev/null)
+HASHED_PASSWORD=$(node -e "
+const bcrypt = require('bcryptjs');
+const hash = bcrypt.hashSync('$DEMO_PASSWORD', 10);
+console.log(hash);
+")
 
 if [ -z "$HASHED_PASSWORD" ]; then
     print_error "Failed to hash password"
