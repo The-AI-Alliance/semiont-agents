@@ -7,6 +7,9 @@ export PYTHONUNBUFFERED=1
 
 SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.14}"
 
+# Detect compose project name from current environment
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename $(dirname $(pwd)))_devcontainer}"
+
 # Generate random demo credentials for this environment
 # Uses random hex string for uniqueness (not guessable)
 RANDOM_ID=$(openssl rand -hex 8)
@@ -211,14 +214,16 @@ fi
 print_status "Creating demo admin user..."
 
 # Run useradd inside backend container
-# Use docker-compose from host (via mounted docker socket) or fallback to API
+# The workspace container shares Docker socket with host via docker-outside-of-docker feature
+cd /workspaces/semiont-agents/.devcontainer
+
 if command -v docker &> /dev/null; then
-    docker compose -f /workspaces/semiont-agents/.devcontainer/docker-compose.yml exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+    docker compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
         print_error "Admin user creation failed"
         exit 1
     }
 elif command -v docker-compose &> /dev/null; then
-    docker-compose -f /workspaces/semiont-agents/.devcontainer/docker-compose.yml exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+    docker-compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
         print_error "Admin user creation failed"
         exit 1
     }
