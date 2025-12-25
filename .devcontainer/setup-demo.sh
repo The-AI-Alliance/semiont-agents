@@ -222,6 +222,9 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
+# Set Docker API version to match host daemon (avoid version mismatch)
+export DOCKER_API_VERSION=1.43
+
 # Find the backend container name
 # Look for container with image containing "semiont-backend" and running state
 BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
