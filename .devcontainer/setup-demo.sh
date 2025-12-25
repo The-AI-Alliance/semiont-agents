@@ -177,6 +177,34 @@ if [ $WAITED -ge $MAX_WAIT ]; then
     exit 1
 fi
 
+# Wait for database schema to be ready (Prisma migrations)
+print_status "Waiting for database schema to be initialized..."
+MAX_WAIT=60
+WAITED=0
+export DOCKER_API_VERSION=1.43
+POSTGRES_CONTAINER=$(docker ps --filter "ancestor=postgres:16-alpine" --format "{{.Names}}" | head -1)
+
+while [ $WAITED -lt $MAX_WAIT ]; do
+    # Check if User table exists
+    if docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'User');" 2>/dev/null | grep -q "t"; then
+        print_success "Database schema is ready"
+        break
+    fi
+
+    if [ $((WAITED % 10)) -eq 0 ]; then
+        echo "  Still waiting for migrations... (${WAITED}s)"
+    fi
+
+    sleep 2
+    WAITED=$((WAITED + 2))
+done
+
+if [ $WAITED -ge $MAX_WAIT ]; then
+    print_error "Database schema not initialized within ${MAX_WAIT}s"
+    print_error "Backend may not have run Prisma migrations"
+    exit 1
+fi
+
 # Wait for frontend service to be healthy
 print_status "Waiting for frontend service to start..."
 MAX_WAIT=60
