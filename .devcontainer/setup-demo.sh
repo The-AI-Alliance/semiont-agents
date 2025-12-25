@@ -5,7 +5,7 @@ set -euo pipefail
 exec 2>&1
 export PYTHONUNBUFFERED=1
 
-SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.14}"
+SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.15}"
 
 # Detect compose project name from current environment
 COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename $(dirname $(pwd)))_devcontainer}"
@@ -336,7 +336,7 @@ fi
 # Install demo dependencies
 print_status "Installing demo dependencies..."
 cd /workspaces/semiont-agents
-npm install 2>&1 | grep -v "npm warn" | tail -5 || true
+npm install --legacy-peer-deps 2>&1 | grep -v "npm warn" | tail -5 || true
 print_success "Dependencies installed"
 
 # Save demo .env credentials
