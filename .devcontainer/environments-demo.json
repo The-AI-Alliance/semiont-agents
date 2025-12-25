@@ -36,9 +36,11 @@
         "type": "external"
       },
       "type": "postgres",
-      "name": "postgres",
-      "host": "localhost",
+      "name": "semiont",
+      "host": "postgres",
       "port": 5432,
+      "user": "semiont",
+      "password": "semiont",
       "environment": {
         "POSTGRES_DB": "semiont",
         "POSTGRES_USER": "semiont",
