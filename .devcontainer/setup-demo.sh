@@ -198,58 +198,81 @@ if [ $WAITED -ge $MAX_WAIT ]; then
     print_warning "It may still be starting - check http://localhost:3000"
 fi
 
-# Create demo admin user using semiont CLI inside backend container
+# Create demo admin user via direct database manipulation
 #
-# APPROACH: Run semiont useradd inside the backend container.
-# The backend container already has @semiont/cli and @semiont/backend installed,
-# along with the Prisma client. This eliminates the dependency between @semiont/cli
-# and @semiont/backend in the workspace container.
+# APPROACH: Execute SQL directly in the postgres container to create an admin user.
+# This is a temporary solution until the CLI properly supports admin user creation
+# without requiring @semiont/backend as a dependency.
 #
-# The backend container has access to:
-# - @semiont/cli (with useradd command)
-# - @semiont/backend (with Prisma schema and client)
-# - /workspace/project volume (for environments/demo.json)
-# - Database connection via postgres hostname
+# FUTURE: This will be replaced by:
+#   1. Backend container having @semiont/cli installed, OR
+#   2. CLI refactored to not depend on @semiont/backend for Prisma client, OR
+#   3. Proper admin user creation endpoint in the backend API
+#
+# For now, we:
+#   1. Use backend container's Node.js to hash the password with bcrypt
+#   2. Execute SQL INSERT directly in postgres container
+#   3. Handle duplicate user errors gracefully for idempotency
 #
 print_status "Creating demo admin user..."
 
-# Run useradd inside backend container
-# The workspace container shares Docker socket with host via docker-outside-of-docker feature
+# Set Docker API version for compatibility
+export DOCKER_API_VERSION=1.43
 
-if ! command -v docker &> /dev/null; then
-    print_error "Docker CLI not available in workspace container"
-    print_error "Cannot run semiont useradd inside backend container"
+# Find postgres container
+POSTGRES_CONTAINER=$(docker ps --filter "ancestor=postgres:16-alpine" --format "{{.Names}}" | head -1)
+
+if [ -z "$POSTGRES_CONTAINER" ]; then
+    print_error "Could not find postgres container"
     exit 1
 fi
 
-# Set Docker API version to match host daemon (avoid version mismatch)
-export DOCKER_API_VERSION=1.43
+print_status "Found postgres container: $POSTGRES_CONTAINER"
 
-# Find the backend container name
-# Look for container with image containing "semiont-backend" and running state
+# Find backend container for password hashing
 BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
 
 if [ -z "$BACKEND_CONTAINER" ]; then
-    # Fallback: try to find by name pattern
-    BACKEND_CONTAINER=$(docker ps --filter "name=backend" --format "{{.Names}}" | head -1)
-fi
-
-if [ -z "$BACKEND_CONTAINER" ]; then
-    print_error "Cannot find running backend container"
-    print_error "Tried: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}"
-    docker ps
+    print_error "Could not find backend container"
     exit 1
 fi
 
-print_status "Found backend container: $BACKEND_CONTAINER"
+# Hash password using backend container's bcrypt
+print_status "Hashing password with bcrypt..."
+HASHED_PASSWORD=$(docker exec "$BACKEND_CONTAINER" node -e "
+const bcrypt = require('bcrypt');
+bcrypt.hash('$DEMO_PASSWORD', 10).then(hash => console.log(hash));
+" 2>/dev/null)
 
-# Run useradd inside the backend container
-docker exec -i "$BACKEND_CONTAINER" sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
-    print_error "Admin user creation failed"
+if [ -z "$HASHED_PASSWORD" ]; then
+    print_error "Failed to hash password"
     exit 1
-}
+fi
 
-print_success "Demo admin user created: $DEMO_EMAIL"
+# Generate timestamps
+CREATED_AT=$(date -u +"%Y-%m-%d %H:%M:%S")
+UPDATED_AT="$CREATED_AT"
+
+# Create admin user in database
+print_status "Inserting admin user into database..."
+
+# Use ON CONFLICT to make this idempotent
+SQL_RESULT=$(docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c "
+INSERT INTO \"User\" (email, password, name, role, \"createdAt\", \"updatedAt\")
+VALUES ('$DEMO_EMAIL', '$HASHED_PASSWORD', 'Demo Admin', 'ADMIN', '$CREATED_AT', '$UPDATED_AT')
+ON CONFLICT (email) DO NOTHING
+RETURNING email;
+" 2>&1)
+
+if echo "$SQL_RESULT" | grep -q "$DEMO_EMAIL"; then
+    print_success "Demo admin user created: $DEMO_EMAIL"
+elif echo "$SQL_RESULT" | grep -q "ERROR"; then
+    print_error "Database error: $SQL_RESULT"
+    exit 1
+else
+    print_warning "User already exists (this is fine)"
+    print_success "Using existing demo admin user: $DEMO_EMAIL"
+fi
 
 # Install demo dependencies
 print_status "Installing demo dependencies..."
