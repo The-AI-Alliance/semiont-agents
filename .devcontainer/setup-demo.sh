@@ -177,31 +177,31 @@ if [ $WAITED -ge $MAX_WAIT ]; then
     exit 1
 fi
 
-# Wait for database schema to be ready (Prisma migrations)
-print_status "Waiting for database schema to be initialized..."
-MAX_WAIT=60
-WAITED=0
+# Run database migrations
+# The backend container doesn't run migrations automatically on startup
+# We need to run them manually via the backend container
+print_status "Running database migrations..."
 export DOCKER_API_VERSION=1.43
-POSTGRES_CONTAINER=$(docker ps --filter "ancestor=postgres:16-alpine" --format "{{.Names}}" | head -1)
 
-while [ $WAITED -lt $MAX_WAIT ]; do
-    # Check if User table exists
-    if docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c "SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'User');" 2>/dev/null | grep -q "t"; then
-        print_success "Database schema is ready"
-        break
-    fi
+# Find backend container
+BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
 
-    if [ $((WAITED % 10)) -eq 0 ]; then
-        echo "  Still waiting for migrations... (${WAITED}s)"
-    fi
+if [ -z "$BACKEND_CONTAINER" ]; then
+    print_error "Could not find backend container"
+    exit 1
+fi
 
-    sleep 2
-    WAITED=$((WAITED + 2))
-done
+# Run Prisma migrations
+set +e
+MIGRATION_RESULT=$(docker exec "$BACKEND_CONTAINER" npx prisma migrate deploy 2>&1)
+MIGRATION_EXIT=$?
+set -e
 
-if [ $WAITED -ge $MAX_WAIT ]; then
-    print_error "Database schema not initialized within ${MAX_WAIT}s"
-    print_error "Backend may not have run Prisma migrations"
+if [ $MIGRATION_EXIT -eq 0 ]; then
+    print_success "Database migrations completed"
+else
+    print_error "Migration failed with exit code $MIGRATION_EXIT:"
+    echo "$MIGRATION_RESULT"
     exit 1
 fi
 
