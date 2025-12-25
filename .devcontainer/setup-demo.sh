@@ -254,15 +254,25 @@ UPDATED_AT="$CREATED_AT"
 print_status "Inserting admin user into database..."
 
 # Use ON CONFLICT to make this idempotent
-SQL_RESULT=$(docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c "
-INSERT INTO \"User\" (email, password, name, role, \"createdAt\", \"updatedAt\")
-VALUES ('$DEMO_EMAIL', '$HASHED_PASSWORD', 'Demo Admin', 'ADMIN', '$CREATED_AT', '$UPDATED_AT')
-ON CONFLICT (email) DO NOTHING
-RETURNING email;
-" 2>&1)
+# Disable pipefail temporarily to capture error output
+set +e
+
+# Build SQL command on a single line to avoid escaping issues with multiline strings
+# Use printf to properly escape the bcrypt hash which contains $ characters
+SQL_RESULT=$(docker exec "$POSTGRES_CONTAINER" psql -U semiont -d semiont -t -c \
+"INSERT INTO \"User\" (email, password, name, role, \"createdAt\", \"updatedAt\") VALUES ('$DEMO_EMAIL', E'$(printf '%s' "$HASHED_PASSWORD" | sed "s/'/''/g")', 'Demo Admin', 'ADMIN', '$CREATED_AT', '$UPDATED_AT') ON CONFLICT (email) DO NOTHING RETURNING email;" 2>&1)
+SQL_EXIT_CODE=$?
+set -e
 
 # Debug: show what we got back
+echo "SQL_EXIT_CODE: $SQL_EXIT_CODE" >&2
 echo "SQL_RESULT: '$SQL_RESULT'" >&2
+
+if [ $SQL_EXIT_CODE -ne 0 ]; then
+    print_error "SQL command failed with exit code $SQL_EXIT_CODE:"
+    echo "$SQL_RESULT"
+    exit 1
+fi
 
 if echo "$SQL_RESULT" | grep -q "$DEMO_EMAIL"; then
     print_success "Demo admin user created: $DEMO_EMAIL"
