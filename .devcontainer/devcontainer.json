@@ -75,13 +75,13 @@
   },
 
   "containerEnv": {
-    "SEMIONT_VERSION": "0.2.0",
+    "SEMIONT_VERSION": "0.2.14",
     "SEMIONT_API_URL": "http://localhost:4000",
     "NODE_ENV": "production"
   },
 
   "remoteEnv": {
-    "SEMIONT_VERSION": "0.2.0",
+    "SEMIONT_VERSION": "0.2.14",
     "SEMIONT_API_URL": "http://localhost:4000",
     "NODE_ENV": "production"
   },
