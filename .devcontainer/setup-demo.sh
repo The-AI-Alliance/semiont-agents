@@ -209,12 +209,24 @@ fi
 # - Database connection via postgres hostname
 #
 print_status "Creating demo admin user..."
-cd /workspaces/semiont-agents
 
-docker compose exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
-    print_error "Admin user creation failed"
+# Run useradd inside backend container
+# Use docker-compose from host (via mounted docker socket) or fallback to API
+if command -v docker &> /dev/null; then
+    docker compose -f /workspaces/semiont-agents/.devcontainer/docker-compose.yml exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+        print_error "Admin user creation failed"
+        exit 1
+    }
+elif command -v docker-compose &> /dev/null; then
+    docker-compose -f /workspaces/semiont-agents/.devcontainer/docker-compose.yml exec -T backend sh -c "semiont useradd --email '$DEMO_EMAIL' --password '$DEMO_PASSWORD' --admin --environment demo" || {
+        print_error "Admin user creation failed"
+        exit 1
+    }
+else
+    print_error "Docker CLI not available in workspace container"
+    print_error "Cannot run semiont useradd inside backend container"
     exit 1
-}
+fi
 
 print_success "Demo admin user created: $DEMO_EMAIL"
 
