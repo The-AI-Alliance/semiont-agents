@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
-  "postCreateCommand": "bash .devcontainer/welcome.sh",
+  "postAttachCommand": "bash .devcontainer/welcome.sh",
 
   "forwardPorts": [3000, 4000, 5432],
 
