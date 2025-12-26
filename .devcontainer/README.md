@@ -115,23 +115,27 @@ To enable AI-powered annotation or graph features:
 
 ### Update to New Release
 
-1. Edit `.devcontainer/.env.template`:
-   ```bash
-   SEMIONT_VERSION=0.2.1  # Update version
-   ```
+When updating to a new Semiont version, update the version number in all of these files:
 
-2. Copy to active env:
-   ```bash
-   cp .devcontainer/.env.template .devcontainer/.env
-   ```
+1. **`.devcontainer/docker-compose.yml`** - SEMIONT_VERSION environment variable
+2. **`.devcontainer/devcontainer.json`** - containerEnv and remoteEnv SEMIONT_VERSION values
+3. **`.devcontainer/setup-demo.sh`** - SEMIONT_VERSION variable
+4. **`package.json`** - @semiont/api-client and @semiont/cli dependency versions
 
-3. Rebuild container:
+After updating all version references:
+
+1. Rebuild container:
    ```bash
    # In VS Code: Cmd/Ctrl+Shift+P → "Dev Containers: Rebuild Container"
    # Or manually:
    docker compose down
    docker compose pull
    docker compose up -d
+   ```
+
+2. Run setup script to install updated dependencies:
+   ```bash
+   bash .devcontainer/setup-demo.sh
    ```
 
 ### Test Development Builds
