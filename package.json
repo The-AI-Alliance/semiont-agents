@@ -5,8 +5,8 @@
   "type": "module",
   "description": "Demo scripts for Semiont",
   "scripts": {
-    "demo": "npx dotenv-cli -e .env -- tsx demo.ts --help",
-    "demo:interactive": "npx dotenv-cli -e .env -- tsx demo.ts --interactive"
+    "demo": "dotenv-cli -e .env -- npx tsx demo.ts --help",
+    "demo:interactive": "dotenv-cli -e .env -- npx tsx demo.ts --interactive"
   },
   "dependencies": {
     "@semiont/api-client": "^0.2.15",
