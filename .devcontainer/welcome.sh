@@ -13,8 +13,8 @@ Your devcontainer is ready. To complete setup:
 
 This will:
   • Wait for backend and frontend services to start
+  • Run database migrations
   • Create a demo admin account with random credentials
-  • Install workspace dependencies
   • Save credentials to .env file
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
