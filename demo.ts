@@ -658,8 +658,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   if (hasInteractiveFlag) {
     // Launch interactive mode directly
-    const app = new TerminalApp(DATASETS);
-    app.run();
+    try {
+      const app = new TerminalApp(DATASETS);
+      app.run();
+    } catch (error) {
+      console.error('Fatal error in interactive mode:');
+      console.error(error);
+      process.exit(1);
+    }
   } else {
     // Show help if no command provided
     if (process.argv.length === 2) {
