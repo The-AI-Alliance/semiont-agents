@@ -7,6 +7,9 @@ export PYTHONUNBUFFERED=1
 
 SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.15}"
 
+# Set Docker API version to match host daemon (avoid version mismatch)
+export DOCKER_API_VERSION=1.43
+
 # Detect compose project name from current environment
 COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename $(dirname $(pwd)))_devcontainer}"
 
@@ -181,15 +184,23 @@ fi
 # The backend container doesn't run migrations automatically on startup
 # We need to run them manually via the backend container
 print_status "Running database migrations..."
-export DOCKER_API_VERSION=1.43
 
 # Find backend container
 BACKEND_CONTAINER=$(docker ps --filter "ancestor=ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}" --format "{{.Names}}" | head -1)
 
 if [ -z "$BACKEND_CONTAINER" ]; then
-    print_error "Could not find backend container"
+    # Fallback: try to find by name pattern
+    BACKEND_CONTAINER=$(docker ps --filter "name=backend" --format "{{.Names}}" | head -1)
+fi
+
+if [ -z "$BACKEND_CONTAINER" ]; then
+    print_error "Cannot find running backend container"
+    print_error "Tried: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}"
+    docker ps
     exit 1
 fi
+
+print_status "Found backend container: $BACKEND_CONTAINER"
 
 # Run Prisma migrations
 set +e
@@ -257,14 +268,18 @@ fi
 #
 print_status "Creating demo admin user..."
 
-# Set Docker API version for compatibility
-export DOCKER_API_VERSION=1.43
-
 # Find postgres container
 POSTGRES_CONTAINER=$(docker ps --filter "ancestor=postgres:16-alpine" --format "{{.Names}}" | head -1)
 
 if [ -z "$POSTGRES_CONTAINER" ]; then
-    print_error "Could not find postgres container"
+    # Fallback: try to find by name pattern
+    POSTGRES_CONTAINER=$(docker ps --filter "name=postgres" --format "{{.Names}}" | head -1)
+fi
+
+if [ -z "$POSTGRES_CONTAINER" ]; then
+    print_error "Cannot find running postgres container"
+    print_error "Tried: postgres:16-alpine"
+    docker ps
     exit 1
 fi
 
