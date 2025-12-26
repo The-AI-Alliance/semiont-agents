@@ -348,41 +348,6 @@ else
     print_success "Using existing demo admin user: $DEMO_EMAIL"
 fi
 
-# Install demo dependencies
-print_status "Installing demo dependencies..."
-cd /workspaces/semiont-agents
-
-# Run npm install and capture result
-set +e
-NPM_OUTPUT=$(npm install --legacy-peer-deps 2>&1)
-NPM_EXIT=$?
-set -e
-
-if [ $NPM_EXIT -ne 0 ]; then
-    print_error "npm install failed:"
-    echo "$NPM_OUTPUT"
-    exit 1
-fi
-
-# Verify critical dependencies are installed
-# Note: dotenv-cli package creates a bin called "dotenv", not "dotenv-cli"
-if [ ! -f "node_modules/.bin/dotenv" ] || [ ! -f "node_modules/.bin/tsx" ]; then
-    print_error "Critical dependencies missing after npm install"
-    echo "Expected: node_modules/.bin/dotenv and node_modules/.bin/tsx"
-    echo ""
-    echo "Checking what's in node_modules/.bin/:"
-    ls -la node_modules/.bin/ 2>/dev/null || echo "node_modules/.bin/ does not exist"
-    echo ""
-    echo "Checking if devDependency packages exist in node_modules:"
-    ls -d node_modules/dotenv-cli node_modules/tsx 2>&1 || echo "devDependency packages not found"
-    echo ""
-    print_error "npm install --legacy-peer-deps did not install devDependencies"
-    print_error "This should not happen - investigating why devDependencies were skipped"
-    exit 1
-fi
-
-print_success "Dependencies installed"
-
 # Save demo .env credentials
 print_status "Saving demo configuration..."
 cd /workspaces/semiont-agents

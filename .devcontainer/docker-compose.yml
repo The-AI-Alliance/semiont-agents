@@ -9,7 +9,6 @@ services:
     environment:
       SEMIONT_VERSION: ${SEMIONT_VERSION:-0.2.15}
       SEMIONT_API_URL: http://localhost:4000
-      NODE_ENV: production
 
   # PostgreSQL Database
   postgres:

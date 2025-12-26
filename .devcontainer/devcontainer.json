@@ -6,6 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
+  "postCreateCommand": "npm install",
   "postAttachCommand": "bash .devcontainer/welcome.sh",
 
   "forwardPorts": [3000, 4000, 5432],
@@ -76,14 +77,12 @@
 
   "containerEnv": {
     "SEMIONT_VERSION": "0.2.15",
-    "SEMIONT_API_URL": "http://localhost:4000",
-    "NODE_ENV": "production"
+    "SEMIONT_API_URL": "http://localhost:4000"
   },
 
   "remoteEnv": {
     "SEMIONT_VERSION": "0.2.15",
-    "SEMIONT_API_URL": "http://localhost:4000",
-    "NODE_ENV": "production"
+    "SEMIONT_API_URL": "http://localhost:4000"
   },
 
   "secrets": {
