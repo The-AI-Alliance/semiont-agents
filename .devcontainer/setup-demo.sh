@@ -391,19 +391,25 @@ cd /workspaces/semiont-agents
 DEMO_BACKEND_URL="${BACKEND_URL:-http://localhost:4000}"
 DEMO_FRONTEND_URL="${FRONTEND_URL:-http://localhost:3000}"
 
+echo ""
+echo "Generated credentials:"
+echo "  Email:    ${DEMO_EMAIL}"
+echo "  Password: ${DEMO_PASSWORD}"
+echo ""
+
 cat > .env <<EOF
 # Semiont Demo Environment
-SEMIONT_VERSION=$SEMIONT_VERSION
+SEMIONT_VERSION=${SEMIONT_VERSION}
 SEMIONT_ENV=demo
-SEMIONT_ROOT=$SEMIONT_ROOT
+SEMIONT_ROOT=${SEMIONT_ROOT}
 
 # API URLs
-BACKEND_URL=$DEMO_BACKEND_URL
-FRONTEND_URL=$DEMO_FRONTEND_URL
+BACKEND_URL=${DEMO_BACKEND_URL}
+FRONTEND_URL=${DEMO_FRONTEND_URL}
 
 # Demo Account Credentials
-AUTH_EMAIL=$DEMO_EMAIL
-AUTH_PASSWORD=$DEMO_PASSWORD
+AUTH_EMAIL=${DEMO_EMAIL}
+AUTH_PASSWORD=${DEMO_PASSWORD}
 
 # Optional: Add your API keys here for advanced features
 # ANTHROPIC_API_KEY=
