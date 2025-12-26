@@ -351,7 +351,27 @@ fi
 # Install demo dependencies
 print_status "Installing demo dependencies..."
 cd /workspaces/semiont-agents
-npm install --legacy-peer-deps 2>&1 | grep -v "npm warn" | tail -5 || true
+
+# Run npm install and capture result
+set +e
+NPM_OUTPUT=$(npm install --legacy-peer-deps 2>&1)
+NPM_EXIT=$?
+set -e
+
+if [ $NPM_EXIT -ne 0 ]; then
+    print_error "npm install failed:"
+    echo "$NPM_OUTPUT"
+    exit 1
+fi
+
+# Verify critical dependencies are installed
+if [ ! -f "node_modules/.bin/dotenv-cli" ] || [ ! -d "node_modules/tsx" ]; then
+    print_error "Critical dependencies missing after install"
+    echo "Expected: node_modules/.bin/dotenv-cli and node_modules/tsx"
+    ls -la node_modules/.bin/ 2>/dev/null || echo "node_modules/.bin/ does not exist"
+    exit 1
+fi
+
 print_success "Dependencies installed"
 
 # Save demo .env credentials
