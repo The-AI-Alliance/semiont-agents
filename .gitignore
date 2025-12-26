@@ -77,3 +77,6 @@ packages/api-client/src/client/
 
 # Generated OpenAPI bundle (source is specs/src/)
 specs/openapi.json
+
+# Demo dataset state files (generated at runtime)
+**/.state.json
