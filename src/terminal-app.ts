@@ -542,4 +542,23 @@ export class TerminalApp {
     this.datasetList.focus();
     this.screen.render();
   }
+
+  /**
+   * Clean up blessed screen and restore terminal
+   * Call this before exiting on error to ensure terminal is left in a good state
+   */
+  public destroy() {
+    try {
+      this.screen.destroy();
+    } catch {
+      // If screen destroy fails, try manual cleanup
+      try {
+        process.stdout.write('\x1b[2J\x1b[0f'); // Clear screen
+        process.stdout.write('\x1b[?1049l'); // Exit alternate screen
+        process.stdout.write('\x1b[?25h'); // Show cursor
+      } catch {
+        // Ignore cleanup errors
+      }
+    }
+  }
 }

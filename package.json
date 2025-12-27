@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Demo scripts for Semiont",
   "scripts": {
-    "demo": "dotenv -e .env -- npx tsx demo.ts --help",
+    "demo": "dotenv -e .env -- npx tsx demo.ts",
     "demo:interactive": "dotenv -e .env -- npx tsx demo.ts --interactive"
   },
   "dependencies": {

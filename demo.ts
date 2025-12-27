@@ -657,9 +657,64 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   );
 
   if (hasInteractiveFlag) {
+    // Keep reference to app for cleanup in error handlers
+    let app: TerminalApp | null = null;
+
+    // Add global error handlers FIRST, before creating blessed screen
+    // This ensures errors don't get swallowed by the blessed UI
+    process.on('uncaughtException', (error) => {
+      // Try to clean up blessed screen if it exists
+      if (app) {
+        try {
+          app.destroy();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+      console.error('\n❌ Uncaught exception:', error);
+      process.exit(1);
+    });
+
+    process.on('unhandledRejection', (reason) => {
+      // Try to clean up blessed screen if it exists
+      if (app) {
+        try {
+          app.destroy();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+      console.error('\n❌ Unhandled promise rejection:', reason);
+      process.exit(1);
+    });
+
     // Launch interactive mode directly
-    const app = new TerminalApp(DATASETS);
-    app.run();
+    try {
+      app = new TerminalApp(DATASETS);
+      app.run();
+    } catch (error) {
+      // Error during initialization
+      if (app) {
+        try {
+          app.destroy();
+        } catch {
+          // Ignore cleanup errors
+        }
+      }
+      console.error('\n❌ Fatal error during interactive mode initialization:\n');
+      if (error instanceof Error) {
+        console.error(`Error: ${error.message}`);
+        console.error(`\nStack trace:`);
+        console.error(error.stack);
+      } else {
+        console.error(error);
+      }
+      console.error('\nPlease check:');
+      console.error('  - That all dependencies are installed (npm install)');
+      console.error('  - That .env file exists with valid credentials');
+      console.error('  - That DATASETS configuration is valid\n');
+      process.exit(1);
+    }
   } else {
     // Show help if no command provided
     if (process.argv.length === 2) {

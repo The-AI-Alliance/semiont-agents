@@ -25,13 +25,13 @@ See [.devcontainer/README.md](.devcontainer/README.md) for container details.
 # Run in interactive terminal UI mode
 npm run demo:interactive
 
-# Or run specific commands via CLI
-npx tsx demo.ts <dataset> <command>
+# Or run specific commands via CLI (using npm script with .env loaded)
+npm run demo -- <dataset> <command>
 
 # Example: Download and process Citizens United case
-npx tsx demo.ts citizens_united download
-npx tsx demo.ts citizens_united load
-npx tsx demo.ts citizens_united annotate
+npm run demo -- citizens_united download
+npm run demo -- citizens_united load
+npm run demo -- citizens_united annotate
 ```
 
 ## Prerequisites
@@ -59,7 +59,7 @@ See [docs/INTERACTIVE.md](docs/INTERACTIVE.md) for details.
 ### CLI Mode
 
 ```bash
-npx tsx demo.ts <dataset> <command>
+npm run demo -- <dataset> <command>
 ```
 
 **Datasets:** `citizens_united`, `prometheus_bound`, `freelaw_nh`, `arxiv`, `hiking`, and private datasets in `config/private/`
