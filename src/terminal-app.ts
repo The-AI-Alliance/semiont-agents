@@ -537,5 +537,9 @@ export class TerminalApp {
     this.logToActivity('{bold}{cyan-fg}Welcome to Semiont Demo Interactive Mode{/cyan-fg}{/bold}');
     this.logToActivity('{gray-fg}Use ↑/↓ or j/k to navigate, Enter to execute, Tab to switch panels, q to quit{/gray-fg}');
     this.logToActivity('{gray-fg}Press {bold}h{/bold} for help • To select text: Hold Shift (or Option/Alt on Mac) while selecting{/gray-fg}\n');
+
+    // Render the screen and focus the dataset list
+    this.datasetList.focus();
+    this.screen.render();
   }
 }
