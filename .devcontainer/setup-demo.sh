@@ -285,11 +285,8 @@ fi
 
 print_status "Found postgres container: $POSTGRES_CONTAINER"
 
-# Install bcrypt for password hashing (same library as backend)
-print_status "Installing bcrypt for password hashing..."
-npm install --no-save bcrypt 2>&1 | grep -v "npm warn" | tail -3 || true
-
 # Hash password using bcrypt (same as backend: 12 rounds)
+# bcrypt is installed as a devDependency via npm install in postCreateCommand
 print_status "Hashing password with bcrypt..."
 HASHED_PASSWORD=$(node -e "
 const bcrypt = require('bcrypt');
