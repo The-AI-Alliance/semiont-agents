@@ -630,12 +630,15 @@ const program = new Command();
 program
   .name('demo')
   .description('Semiont demo script for multiple datasets\n\nUse --interactive (or --app, --terminal) to launch the interactive terminal UI')
-  .version('0.1.0');
+  .version('0.1.0')
+  .argument('[dataset]', `Dataset name. Available: ${Object.keys(DATASETS).join(', ')}`)
+  .argument('[command]', 'Command to run: download, load, annotate, validate')
+  .action((dataset?: string, command?: string) => {
+    if (!dataset || !command) {
+      program.help();
+      return;
+    }
 
-program
-  .command('<dataset> <command>')
-  .description(`Run a command on a dataset. Datasets: ${Object.keys(DATASETS).join(', ')}. Commands: download, load, annotate, validate`)
-  .action((dataset: string, command: string) => {
     if (command === 'download') {
       return downloadCommand(dataset);
     } else if (command === 'load') {
