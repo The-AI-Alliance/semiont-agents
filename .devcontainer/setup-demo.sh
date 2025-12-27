@@ -285,15 +285,15 @@ fi
 
 print_status "Found postgres container: $POSTGRES_CONTAINER"
 
-# Install bcryptjs for password hashing (lightweight, pure JS)
-print_status "Installing bcryptjs for password hashing..."
-npm install --no-save bcryptjs 2>&1 | grep -v "npm warn" | tail -3 || true
+# Install bcrypt for password hashing (same library as backend)
+print_status "Installing bcrypt for password hashing..."
+npm install --no-save bcrypt 2>&1 | grep -v "npm warn" | tail -3 || true
 
-# Hash password using bcryptjs
+# Hash password using bcrypt (same as backend: 12 rounds)
 print_status "Hashing password with bcrypt..."
 HASHED_PASSWORD=$(node -e "
-const bcrypt = require('bcryptjs');
-const hash = bcrypt.hashSync('$DEMO_PASSWORD', 10);
+const bcrypt = require('bcrypt');
+const hash = bcrypt.hashSync('$DEMO_PASSWORD', 12);
 console.log(hash);
 ")
 
