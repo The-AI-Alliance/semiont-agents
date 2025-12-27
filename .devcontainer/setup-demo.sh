@@ -7,8 +7,8 @@ export PYTHONUNBUFFERED=1
 
 SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.15}"
 
-# Set Docker API version to match host daemon (avoid version mismatch)
-export DOCKER_API_VERSION=1.43
+# Docker API version is set to 1.43 in devcontainer.json (containerEnv and remoteEnv)
+# to match GitHub Codespaces Docker daemon limitations
 
 # Detect compose project name from current environment
 COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-$(basename $(dirname $(pwd)))_devcontainer}"
