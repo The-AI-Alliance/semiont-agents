@@ -159,8 +159,8 @@ print_status "Waiting for backend service to start..."
 MAX_WAIT=180  # Increased from 120s to account for start_period
 WAITED=0
 while [ $WAITED -lt $MAX_WAIT ]; do
-    # Try health check
-    if curl -sf http://localhost:4000/api/health > /dev/null 2>&1; then
+    # Try health check using Docker service name
+    if curl -sf http://backend:4000/api/health > /dev/null 2>&1; then
         print_success "Backend is healthy"
         break
     fi
@@ -236,7 +236,7 @@ print_status "Waiting for frontend service to start..."
 MAX_WAIT=60
 WAITED=0
 while [ $WAITED -lt $MAX_WAIT ]; do
-    if curl -sf http://localhost:3000 > /dev/null 2>&1; then
+    if curl -sf http://frontend:3000 > /dev/null 2>&1; then
         print_success "Frontend is healthy"
         break
     fi
@@ -249,7 +249,7 @@ done
 
 if [ $WAITED -ge $MAX_WAIT ]; then
     print_warning "Frontend took longer than expected to start"
-    print_warning "It may still be starting - check http://localhost:3000"
+    print_warning "It may still be starting - check http://frontend:3000"
 fi
 
 # Create demo admin user via direct database manipulation
