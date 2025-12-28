@@ -51,12 +51,13 @@ echo ""
 echo "Version: $SEMIONT_VERSION"
 echo ""
 echo "📋 Setup Steps:"
-echo "  • Install Semiont CLI"
-echo "  • Create project directory"
-echo "  • Initialize Semiont project"
-echo "  • Configure environment"
-echo "  • Wait for services"
+echo "  • Install Semiont CLI globally"
+echo "  • Verify project directory"
+echo "  • Initialize Semiont project config"
+echo "  • Configure environment URLs"
+echo "  • Wait for backend service"
 echo "  • Run database migrations"
+echo "  • Wait for frontend service"
 echo "  • Create demo admin user"
 echo ""
 echo "⏱️  Estimated time: 2-3 minutes"
@@ -263,7 +264,7 @@ fi
 #   3. Proper admin user creation endpoint in the backend API
 #
 # For now, we:
-#   1. Install bcryptjs in workspace to hash the password
+#   1. Use bcrypt (installed as devDependency) to hash the password
 #   2. Execute SQL INSERT directly in postgres container
 #   3. Handle duplicate user errors gracefully for idempotency
 #
