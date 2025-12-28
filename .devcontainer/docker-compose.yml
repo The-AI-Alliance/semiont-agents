@@ -6,7 +6,7 @@ services:
       - ..:/workspaces/semiont-agents:cached
     command: sleep infinity
     environment:
-      SEMIONT_VERSION: ${SEMIONT_VERSION:-0.2.15}
+      SEMIONT_VERSION: ${SEMIONT_VERSION:-0.2.16}
 
   # PostgreSQL Database
   postgres:

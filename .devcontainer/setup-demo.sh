@@ -5,7 +5,7 @@ set -euo pipefail
 exec 2>&1
 export PYTHONUNBUFFERED=1
 
-SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.15}"
+SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.16}"
 
 # Docker API version is set to 1.43 in devcontainer.json (containerEnv and remoteEnv)
 # to match GitHub Codespaces Docker daemon limitations
