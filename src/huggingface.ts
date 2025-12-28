@@ -31,6 +31,10 @@ export interface HuggingFaceDatasetOptions {
   length?: number;
 }
 
+interface HuggingFaceAPIResponse {
+  rows: Array<{ row: HuggingFaceDocument }>;
+}
+
 /**
  * Fetch documents from a Hugging Face dataset
  * Uses the Hugging Face Datasets Server API
@@ -55,14 +59,14 @@ export async function fetchHuggingFaceDataset(
     throw new Error(`Failed to fetch dataset: ${response.status} ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as HuggingFaceAPIResponse;
 
   if (!data.rows || !Array.isArray(data.rows)) {
     throw new Error('Invalid response format from Hugging Face API');
   }
 
   // Extract the row data
-  return data.rows.map((item: any) => item.row);
+  return data.rows.map((item) => item.row);
 }
 
 /**

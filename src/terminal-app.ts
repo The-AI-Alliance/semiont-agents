@@ -7,7 +7,10 @@
 import blessed from 'blessed';
 import { existsSync, readFileSync } from 'node:fs';
 import type { DatasetConfigWithPaths } from '../config/types.js';
-import { downloadCommand, loadCommand, annotateCommand, validateCommand } from '../demo.js';
+import { downloadCommand } from './commands/download.js';
+import { loadCommand } from './commands/load.js';
+import { annotateCommand } from './commands/annotate.js';
+import { validateCommand } from './commands/validate.js';
 
 interface CommandStatus {
   dataset: string;
@@ -22,7 +25,7 @@ interface SelectedItem {
 }
 
 export class TerminalApp {
-  private screen: blessed.Widgets.Screen;
+  public screen: blessed.Widgets.Screen;
   private datasetList: blessed.Widgets.ListElement;
   private detailsBox: blessed.Widgets.BoxElement;
   private activityLog: blessed.Widgets.BoxElement;

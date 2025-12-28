@@ -25,7 +25,7 @@ Fetches content from various sources and caches it locally.
 **Example:**
 
 ```bash
-npx tsx demo.ts citizens_united download
+demo citizens_united download
 ```
 
 **Output:**
@@ -52,7 +52,7 @@ Processes cached content and uploads it to the Semiont backend.
 **Example:**
 
 ```bash
-npx tsx demo.ts citizens_united load
+demo citizens_united load
 ```
 
 **Output:**
@@ -91,7 +91,7 @@ Detects patterns in the content and creates semantic annotations.
 **Example:**
 
 ```bash
-npx tsx demo.ts citizens_united annotate
+demo citizens_united annotate
 ```
 
 **Output:**
@@ -125,7 +125,7 @@ Verifies uploaded resources and displays integrity information.
 **Example:**
 
 ```bash
-npx tsx demo.ts citizens_united validate
+demo citizens_united validate
 ```
 
 **Output:**
@@ -146,22 +146,22 @@ Running all phases in sequence:
 
 ```bash
 # 1. Download content
-npx tsx demo.ts citizens_united download
+demo citizens_united download
 
 # 2. Process and upload
-npx tsx demo.ts citizens_united load
+demo citizens_united load
 
 # 3. Create annotations
-npx tsx demo.ts citizens_united annotate
+demo citizens_united annotate
 
 # 4. Verify resources
-npx tsx demo.ts citizens_united validate
+demo citizens_united validate
 ```
 
 **Or use the interactive UI:**
 
 ```bash
-npm run demo:interactive
+demo interactive
 ```
 
 Navigate to the dataset, select commands with arrow keys, and press Enter to execute.

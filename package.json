@@ -4,21 +4,35 @@
   "private": true,
   "type": "module",
   "description": "Demo scripts for Semiont",
+  "bin": {
+    "demo": "./dist/cli.js"
+  },
+  "files": [
+    "dist/",
+    "config/**/*.yaml"
+  ],
   "scripts": {
-    "demo": "dotenv -e .env -- npx tsx demo.ts",
-    "demo:interactive": "dotenv -e .env -- npx tsx demo.ts --interactive"
+    "build": "npm run typecheck && node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx src/cli.ts",
+    "demo": "demo",
+    "demo:interactive": "demo interactive"
   },
   "dependencies": {
     "@semiont/api-client": "^0.2.15",
     "@semiont/cli": "^0.2.15",
     "blessed": "^0.1.81",
-    "commander": "^12.1.0"
+    "commander": "^14.0.0",
+    "dotenv": "^16.0.0",
+    "js-yaml": "^4.1.1"
   },
   "devDependencies": {
     "@types/blessed": "^0.1.25",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.17.0",
     "bcrypt": "^5.1.1",
     "dotenv-cli": "^10.0.0",
+    "esbuild": "^0.24.0",
     "tsx": "^4.7.0",
     "typescript": "^5.6.3"
   }
