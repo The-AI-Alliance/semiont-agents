@@ -351,9 +351,11 @@ fi
 print_status "Saving demo configuration..."
 cd /workspaces/semiont-agents
 
-# Use Codespaces URLs if available, otherwise localhost
-DEMO_BACKEND_URL="${BACKEND_URL:-http://localhost:4000}"
-DEMO_FRONTEND_URL="${FRONTEND_URL:-http://localhost:3000}"
+# For demo scripts running inside the devcontainer, use Docker Compose service names
+# All services are on the same Docker network and can access each other by service name
+# The public Codespaces URLs are for browser access only
+DEMO_BACKEND_URL="http://backend:4000"
+DEMO_FRONTEND_URL="http://frontend:3000"
 
 echo ""
 echo "Generated credentials:"
@@ -367,20 +369,13 @@ SEMIONT_VERSION=${SEMIONT_VERSION}
 SEMIONT_ENV=demo
 SEMIONT_ROOT=${SEMIONT_ROOT}
 
-# API URLs
+# API URLs (using Docker service names for internal access)
 BACKEND_URL=${DEMO_BACKEND_URL}
 FRONTEND_URL=${DEMO_FRONTEND_URL}
 
 # Demo Account Credentials
 AUTH_EMAIL=${DEMO_EMAIL}
 AUTH_PASSWORD=${DEMO_PASSWORD}
-
-# Optional: Add your API keys here for advanced features
-# ANTHROPIC_API_KEY=
-# NEO4J_URI=
-# NEO4J_USERNAME=
-# NEO4J_PASSWORD=
-# NEO4J_DATABASE=
 EOF
 print_success "Demo configuration saved to .env"
 
