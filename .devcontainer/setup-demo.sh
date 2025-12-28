@@ -80,8 +80,9 @@ else
 fi
 
 # Verify project directory exists (created by init-env.sh)
-export SEMIONT_ROOT=/workspaces/semiont-agents/project
-export SEMIONT_ENV=demo
+# SEMIONT_ROOT and SEMIONT_ENV are set in devcontainer.json (containerEnv and remoteEnv)
+SEMIONT_ROOT="${SEMIONT_ROOT:-/workspaces/semiont-agents/project}"
+SEMIONT_ENV="${SEMIONT_ENV:-demo}"
 
 if [ ! -d "$SEMIONT_ROOT" ]; then
     print_error "Project directory not found at $SEMIONT_ROOT"
