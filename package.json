@@ -9,8 +9,8 @@
     "demo:interactive": "dotenv -e .env -- npx tsx demo.ts --interactive"
   },
   "dependencies": {
-    "@semiont/api-client": "^0.2.21",
-    "@semiont/cli": "^0.2.21",
+    "@semiont/api-client": "^0.2.23",
+    "@semiont/cli": "^0.2.23",
     "blessed": "^0.1.81",
     "commander": "^12.1.0"
   },
