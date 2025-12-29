@@ -35,12 +35,11 @@ services:
         condition: service_healthy
     volumes:
       - ../project:/workspace/project:cached
-      - backend_data:/workspace/data
-    # Fix permissions on named volume before starting
-    user: root
-    command: >
-      sh -c "chown -R semiont:nodejs /workspace/data &&
-             su semiont -c 'exec docker-entrypoint.sh node dist/index.js'"
+      - type: volume
+        source: backend_data
+        target: /workspace/data
+        volume:
+          nocopy: false
     environment:
       # Database connection
       DATABASE_URL: postgresql://semiont:semiont@postgres:5432/semiont
@@ -95,3 +94,8 @@ services:
 volumes:
   postgres_data:
   backend_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/../.data/backend
