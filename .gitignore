@@ -15,6 +15,9 @@ pnpm-debug.log*
 # Generated project directory (created by init-env.sh)
 project/
 
+# Docker volume data directories
+data/
+
 # Build outputs
 packages/*/dist/
 dist/
