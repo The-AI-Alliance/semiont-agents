@@ -6,7 +6,7 @@ services:
       - ..:/workspaces/semiont-agents:cached
     command: sleep infinity
     environment:
-      SEMIONT_VERSION: ${SEMIONT_VERSION:-0.2.16}
+      SEMIONT_VERSION: ${SEMIONT_VERSION}
 
   # PostgreSQL Database
   postgres:
@@ -28,7 +28,7 @@ services:
 
   # Semiont Backend API
   backend:
-    image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION:-latest}
+    image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}
     restart: unless-stopped
     depends_on:
       postgres:
@@ -66,7 +66,7 @@ services:
 
   # Semiont Frontend UI
   frontend:
-    image: ghcr.io/the-ai-alliance/semiont-frontend:${SEMIONT_VERSION:-latest}
+    image: ghcr.io/the-ai-alliance/semiont-frontend:${SEMIONT_VERSION}
     restart: unless-stopped
     depends_on:
       backend:

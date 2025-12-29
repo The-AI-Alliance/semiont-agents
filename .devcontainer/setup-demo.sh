@@ -379,6 +379,14 @@ AUTH_PASSWORD=${DEMO_PASSWORD}
 EOF
 print_success "Demo configuration saved to .env"
 
+# Verify actual running container versions
+print_status "Verifying running container versions..."
+echo ""
+echo "Backend image:  $(docker inspect "$BACKEND_CONTAINER" --format='{{.Config.Image}}')"
+echo "Frontend image: $(docker ps --filter 'name=frontend' --format '{{.Image}}' | head -1)"
+echo "Postgres image: $(docker inspect "$POSTGRES_CONTAINER" --format='{{.Config.Image}}')"
+echo ""
+
 echo ""
 echo "=========================================="
 echo "   ✅ SEMIONT AGENTS DEMO READY!"
