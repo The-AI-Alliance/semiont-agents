@@ -5,7 +5,12 @@ set -euo pipefail
 exec 2>&1
 export PYTHONUNBUFFERED=1
 
-SEMIONT_VERSION="${SEMIONT_VERSION:-0.2.23}"
+# Fail if SEMIONT_VERSION is not set (NO DEFAULTS - FAIL LOUDLY)
+if [ -z "${SEMIONT_VERSION:-}" ]; then
+    echo "ERROR: SEMIONT_VERSION environment variable is not set"
+    echo "This should be set by devcontainer.json containerEnv/remoteEnv"
+    exit 1
+fi
 
 # Docker API version is set to 1.43 in devcontainer.json (containerEnv and remoteEnv)
 # to match GitHub Codespaces Docker daemon limitations
@@ -82,8 +87,17 @@ fi
 
 # Verify project directory exists (created by init-env.sh)
 # SEMIONT_ROOT and SEMIONT_ENV are set in devcontainer.json (containerEnv and remoteEnv)
-SEMIONT_ROOT="${SEMIONT_ROOT:-/workspaces/semiont-agents/project}"
-SEMIONT_ENV="${SEMIONT_ENV:-demo}"
+if [ -z "${SEMIONT_ROOT:-}" ]; then
+    echo "ERROR: SEMIONT_ROOT environment variable is not set"
+    echo "This should be set by devcontainer.json containerEnv/remoteEnv"
+    exit 1
+fi
+
+if [ -z "${SEMIONT_ENV:-}" ]; then
+    echo "ERROR: SEMIONT_ENV environment variable is not set"
+    echo "This should be set by devcontainer.json containerEnv/remoteEnv"
+    exit 1
+fi
 
 if [ ! -d "$SEMIONT_ROOT" ]; then
     print_error "Project directory not found at $SEMIONT_ROOT"
