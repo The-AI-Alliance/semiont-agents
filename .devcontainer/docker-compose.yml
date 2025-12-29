@@ -4,6 +4,7 @@ services:
     image: mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
     volumes:
       - ..:/workspaces/semiont-agents:cached
+      - backend_data:/backend-data:ro
     command: sleep infinity
     environment:
       SEMIONT_VERSION: ${SEMIONT_VERSION}
@@ -42,8 +43,6 @@ services:
       # Semiont configuration
       SEMIONT_ROOT: /workspace/project
       SEMIONT_ENV: demo
-      # Storage
-      DATA_DIR: /app/data
       # JWT
       JWT_SECRET: ${JWT_SECRET:-demo-jwt-secret-minimum-32-characters-long}
       # Server
