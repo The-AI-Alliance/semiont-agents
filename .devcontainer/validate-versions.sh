@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # Extract versions from each source
-INIT_ENV_VERSION=$(grep '^SEMIONT_VERSION=' .devcontainer/init-env.sh | cut -d'"' -f2)
+INIT_ENV_VERSION=$(grep '^SEMIONT_VERSION=' .devcontainer/init-env.sh | head -1 | cut -d'"' -f2)
 DEVCONTAINER_VERSION=$(grep '"SEMIONT_VERSION":' .devcontainer/devcontainer.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 API_CLIENT_VERSION=$(node -e "console.log(require('./package.json').dependencies['@semiont/api-client'])" | sed 's/\^//')
 CLI_VERSION=$(node -e "console.log(require('./package.json').dependencies['@semiont/cli'])" | sed 's/\^//')
