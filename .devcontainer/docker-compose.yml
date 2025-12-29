@@ -42,6 +42,8 @@ services:
       # Semiont configuration
       SEMIONT_ROOT: /workspace/project
       SEMIONT_ENV: demo
+      # Storage
+      DATA_DIR: /workspace/data
       # JWT
       JWT_SECRET: ${JWT_SECRET:-demo-jwt-secret-minimum-32-characters-long}
       # Server
