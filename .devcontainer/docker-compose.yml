@@ -30,15 +30,12 @@ services:
   backend:
     image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}
     restart: unless-stopped
-    user: root
-    entrypoint: ["/workspace/entrypoint-wrapper.sh"]
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ../project:/workspace/project:cached
-      - backend_data:/workspace/data
-      - ./entrypoint-wrapper.sh:/workspace/entrypoint-wrapper.sh:ro
+      - backend_data:/app/data
     environment:
       # Database connection
       DATABASE_URL: postgresql://semiont:semiont@postgres:5432/semiont
@@ -46,7 +43,7 @@ services:
       SEMIONT_ROOT: /workspace/project
       SEMIONT_ENV: demo
       # Storage
-      DATA_DIR: /workspace/data
+      DATA_DIR: /app/data
       # JWT
       JWT_SECRET: ${JWT_SECRET:-demo-jwt-secret-minimum-32-characters-long}
       # Server
