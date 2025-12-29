@@ -40,6 +40,7 @@ import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SemiontApiClient, baseUrl, resourceUri, type ResourceUri } from '@semiont/api-client';
+import winston from 'winston';
 
 // Dataset configuration types
 import type { DatasetConfig, DatasetConfigWithPaths } from './config/types.js';
@@ -161,10 +162,26 @@ const AUTH_EMAIL = process.env.AUTH_EMAIL || 'you@example.com';
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
 const DATA_DIR = process.env.DATA_DIR || '/tmp/semiont/data/uploads';
+const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 
 if (!AUTH_EMAIL && !ACCESS_TOKEN) {
   throw new Error('Either AUTH_EMAIL or ACCESS_TOKEN must be provided');
 }
+
+// Configure logger for API client
+const logger = winston.createLogger({
+  level: LOG_LEVEL,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
+      return `[${timestamp}] ${level.toUpperCase()}: ${message}${metaStr}`;
+    })
+  ),
+  transports: [
+    new winston.transports.Console()
+  ]
+});
 
 // ============================================================================
 // STATE MANAGEMENT
@@ -265,6 +282,7 @@ async function loadCommand(datasetName: string) {
 
     const client = new SemiontApiClient({
       baseUrl: baseUrl(BACKEND_URL),
+      logger,
     });
 
     // Pass 0: Authentication
@@ -434,6 +452,7 @@ async function annotateCommand(datasetName: string) {
   try {
     const client = new SemiontApiClient({
       baseUrl: baseUrl(BACKEND_URL),
+      logger,
     });
 
     // Pass 0: Authentication
@@ -556,6 +575,7 @@ async function validateCommand(datasetName: string) {
   try {
     const client = new SemiontApiClient({
       baseUrl: baseUrl(BACKEND_URL),
+      logger,
     });
 
     // Pass 0: Authentication
