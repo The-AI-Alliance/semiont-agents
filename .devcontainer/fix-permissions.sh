@@ -7,6 +7,8 @@ set -e
 # Ensure data directory exists and is writable by semiont user
 mkdir -p /workspace/data
 chown -R semiont:nodejs /workspace/data
+chmod -R 755 /workspace/data
 
-# Drop to semiont user and exec the original entrypoint
-exec gosu semiont docker-entrypoint.sh "$@"
+# Switch to semiont user and run the app
+cd /app
+exec su-exec semiont node dist/index.js
