@@ -30,16 +30,16 @@ services:
   backend:
     image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}
     restart: unless-stopped
+    user: root
+    entrypoint: ["/workspace/fix-permissions.sh"]
+    command: ["node", "dist/index.js"]
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ../project:/workspace/project:cached
-      - type: volume
-        source: backend_data
-        target: /workspace/data
-        volume:
-          nocopy: false
+      - backend_data:/workspace/data
+      - ./fix-permissions.sh:/workspace/fix-permissions.sh:ro
     environment:
       # Database connection
       DATABASE_URL: postgresql://semiont:semiont@postgres:5432/semiont
@@ -94,8 +94,3 @@ services:
 volumes:
   postgres_data:
   backend_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/../data/backend

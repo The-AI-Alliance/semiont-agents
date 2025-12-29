@@ -5,7 +5,7 @@
   "service": "demo-workspace",
   "workspaceFolder": "/workspaces/semiont-agents",
 
-  "initializeCommand": "bash .devcontainer/init-env.sh && mkdir -p data/backend && chmod 777 data/backend",
+  "initializeCommand": "bash .devcontainer/init-env.sh",
   "postCreateCommand": "bash .devcontainer/validate-versions.sh && npm install",
   "postAttachCommand": "bash .devcontainer/welcome.sh",
 
