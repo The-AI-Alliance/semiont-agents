@@ -31,14 +31,14 @@ services:
     image: ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}
     restart: unless-stopped
     user: root
-    entrypoint: ["/workspace/fix-permissions.sh"]
+    entrypoint: ["/workspace/entrypoint-wrapper.sh"]
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ../project:/workspace/project:cached
       - backend_data:/workspace/data
-      - ./fix-permissions.sh:/workspace/fix-permissions.sh:ro
+      - ./entrypoint-wrapper.sh:/workspace/entrypoint-wrapper.sh:ro
     environment:
       # Database connection
       DATABASE_URL: postgresql://semiont:semiont@postgres:5432/semiont
