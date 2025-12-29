@@ -6,7 +6,7 @@
   "workspaceFolder": "/workspaces/semiont-agents",
 
   "initializeCommand": "bash .devcontainer/init-env.sh",
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "npm install && npm run build && npm link",
   "postAttachCommand": "bash .devcontainer/welcome.sh",
 
   "forwardPorts": [3000, 4000, 5432],

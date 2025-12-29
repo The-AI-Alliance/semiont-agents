@@ -17,7 +17,7 @@ export interface DocumentInfo {
 export interface DatasetConfig {
   name: string;
   displayName: string;
-  emoji: string;
+  emoji?: string;
 
   // Single-document workflow (chunked or not)
   shouldChunk: boolean;

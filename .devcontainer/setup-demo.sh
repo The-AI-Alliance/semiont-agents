@@ -52,6 +52,7 @@ echo "Version: $SEMIONT_VERSION"
 echo ""
 echo "📋 Setup Steps:"
 echo "  • Install Semiont CLI globally"
+echo "  • Install Demo CLI globally"
 echo "  • Verify project directory"
 echo "  • Initialize Semiont project config"
 echo "  • Configure environment URLs"
@@ -78,6 +79,19 @@ if command -v semiont &> /dev/null; then
     print_success "CLI available: $CLI_VERSION"
 else
     print_warning "CLI command 'semiont' not in PATH, but package is installed"
+fi
+
+# Install Demo CLI globally (already built by postCreateCommand)
+print_status "Installing demo CLI..."
+npm link
+print_success "Demo CLI installed"
+
+# Verify demo command is available
+if command -v demo &> /dev/null; then
+    DEMO_VERSION=$(demo --version 2>&1 || echo "0.1.0")
+    print_success "Demo CLI available: $DEMO_VERSION"
+else
+    print_warning "Demo command not in PATH"
 fi
 
 # Verify project directory exists (created by init-env.sh)

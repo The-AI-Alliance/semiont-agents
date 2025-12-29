@@ -23,15 +23,15 @@ See [.devcontainer/README.md](.devcontainer/README.md) for container details.
 
 ```bash
 # Run in interactive terminal UI mode
-npm run demo:interactive
+demo interactive
 
-# Or run specific commands via CLI (using npm script with .env loaded)
-npm run demo -- <dataset> <command>
+# Or run specific commands via CLI
+demo <dataset> <command>
 
 # Example: Download and process Citizens United case
-npm run demo -- citizens_united download
-npm run demo -- citizens_united load
-npm run demo -- citizens_united annotate
+demo citizens_united download
+demo citizens_united load
+demo citizens_united annotate
 ```
 
 ## Prerequisites
@@ -43,7 +43,7 @@ Everything is pre-configured when using GitHub Codespaces! Just click the badge 
 ### Interactive Terminal UI
 
 ```bash
-npm run demo:interactive
+demo interactive
 ```
 
 Full-screen terminal interface with three panels:
@@ -59,7 +59,7 @@ See [docs/INTERACTIVE.md](docs/INTERACTIVE.md) for details.
 ### CLI Mode
 
 ```bash
-npm run demo -- <dataset> <command>
+demo <dataset> <command>
 ```
 
 **Datasets:** `citizens_united`, `prometheus_bound`, `freelaw_nh`, `arxiv`, `hiking`, and private datasets in `config/private/`
@@ -78,9 +78,18 @@ npm run demo -- <dataset> <command>
 ## Project Structure
 
 ```text
-demo/
-├── demo.ts                   # Main entry point
-├── src/                      # Reusable modules
+semiont-agents/
+├── src/
+│   ├── cli.ts               # CLI entry point
+│   ├── commands/            # Command implementations
+│   │   ├── index.ts         # Command registry
+│   │   ├── download.ts      # Download command
+│   │   ├── load.ts          # Load command
+│   │   ├── annotate.ts      # Annotate command
+│   │   ├── validate.ts      # Validate command
+│   │   └── interactive.ts   # Interactive UI launcher
+│   ├── datasets/
+│   │   └── loader.ts        # Dynamic dataset discovery
 │   ├── auth.ts              # Authentication
 │   ├── annotations.ts       # Annotation creation/linking
 │   ├── chunking.ts          # Text chunking

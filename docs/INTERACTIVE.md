@@ -5,14 +5,7 @@ The Semiont demo includes an interactive terminal UI for managing dataset operat
 ## Launching Interactive Mode
 
 ```bash
-# Using npm script
-npm run demo:interactive
-
-# Or directly
-npx tsx demo.ts --interactive
-# Aliases also work:
-npx tsx demo.ts --app
-npx tsx demo.ts --terminal
+demo interactive
 ```
 
 ## Interface Layout
@@ -64,7 +57,7 @@ Statuses update automatically after each command completes.
 
 ## Example Workflow
 
-1. Launch interactive mode: `npm run demo:interactive`
+1. Launch interactive mode: `demo interactive`
 2. Navigate to a dataset's `download` command
 3. Press `Enter` to download content
 4. Navigate to the `load` command
