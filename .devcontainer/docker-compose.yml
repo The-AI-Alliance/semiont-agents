@@ -40,7 +40,7 @@ services:
     user: root
     command: >
       sh -c "chown -R semiont:nodejs /workspace/data &&
-             su-exec semiont docker-entrypoint.sh node dist/index.js"
+             su semiont -c 'exec docker-entrypoint.sh node dist/index.js'"
     environment:
       # Database connection
       DATABASE_URL: postgresql://semiont:semiont@postgres:5432/semiont
