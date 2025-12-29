@@ -382,10 +382,40 @@ print_success "Demo configuration saved to .env"
 # Verify actual running container versions
 print_status "Verifying running container versions..."
 echo ""
-echo "Backend image:  $(docker inspect "$BACKEND_CONTAINER" --format='{{.Config.Image}}')"
-echo "Frontend image: $(docker ps --filter 'name=frontend' --format '{{.Image}}' | head -1)"
-echo "Postgres image: $(docker inspect "$POSTGRES_CONTAINER" --format='{{.Config.Image}}')"
+ACTUAL_BACKEND_IMAGE=$(docker inspect "$BACKEND_CONTAINER" --format='{{.Config.Image}}')
+ACTUAL_FRONTEND_IMAGE=$(docker ps --filter 'name=frontend' --format '{{.Image}}' | head -1)
+ACTUAL_POSTGRES_IMAGE=$(docker inspect "$POSTGRES_CONTAINER" --format='{{.Config.Image}}')
+
+echo "Backend image:  $ACTUAL_BACKEND_IMAGE"
+echo "Frontend image: $ACTUAL_FRONTEND_IMAGE"
+echo "Postgres image: $ACTUAL_POSTGRES_IMAGE"
 echo ""
+
+# Check for version mismatches
+EXPECTED_BACKEND_IMAGE="ghcr.io/the-ai-alliance/semiont-backend:${SEMIONT_VERSION}"
+EXPECTED_FRONTEND_IMAGE="ghcr.io/the-ai-alliance/semiont-frontend:${SEMIONT_VERSION}"
+
+if [ "$ACTUAL_BACKEND_IMAGE" != "$EXPECTED_BACKEND_IMAGE" ] || [ "$ACTUAL_FRONTEND_IMAGE" != "$EXPECTED_FRONTEND_IMAGE" ]; then
+    print_error "VERSION MISMATCH DETECTED!"
+    echo ""
+    echo "Expected backend:  $EXPECTED_BACKEND_IMAGE"
+    echo "Actual backend:    $ACTUAL_BACKEND_IMAGE"
+    echo ""
+    echo "Expected frontend: $EXPECTED_FRONTEND_IMAGE"
+    echo "Actual frontend:   $ACTUAL_FRONTEND_IMAGE"
+    echo ""
+    print_error "Containers are running the wrong version."
+    print_error "This codespace needs to be rebuilt to use version ${SEMIONT_VERSION}."
+    echo ""
+    echo "To fix this:"
+    echo "  1. In VS Code: Command Palette > 'Codespaces: Rebuild Container'"
+    echo "  2. Or from terminal: Exit this codespace and create a new one"
+    echo ""
+    print_error "Setup cannot continue with mismatched versions."
+    exit 1
+fi
+
+print_success "All containers are running the correct version: ${SEMIONT_VERSION}"
 
 echo ""
 echo "=========================================="
