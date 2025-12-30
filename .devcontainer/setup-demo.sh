@@ -325,8 +325,9 @@ print_status "Inserting admin user into database..."
 # Extract domain from email for domain-based access control
 DEMO_DOMAIN=$(echo "$DEMO_EMAIL" | cut -d'@' -f2)
 
-# Generate a CUID-style ID for the user
-DEMO_USER_ID="demo_$(openssl rand -hex 12)"
+# Generate a CUID-compatible ID for the user (must start with 'c' and be 25+ chars)
+# Format: c + 24 lowercase alphanumeric characters
+DEMO_USER_ID="c$(openssl rand -hex 12 | tr 'A-F' 'a-f')"
 
 # Use ON CONFLICT to make this idempotent
 # Disable pipefail temporarily to capture error output
