@@ -12,6 +12,10 @@
   "env": {
     "NODE_ENV": "production"
   },
+  "auth": {
+    "jwtSecret": "demo-jwt-secret-minimum-32-characters-long",
+    "enableLocalAuth": true
+  },
   "services": {
     "backend": {
       "platform": {
