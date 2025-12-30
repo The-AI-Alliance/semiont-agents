@@ -51,8 +51,6 @@ services:
       # Logging
       LOG_LEVEL: debug
       LOG_FORMAT: simple
-      # Auth
-      ENABLE_LOCAL_AUTH: "true"
       # Optional AI services
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       NEO4J_URI: ${NEO4J_URI:-}
