@@ -74,8 +74,8 @@ services:
       backend:
         condition: service_healthy
     environment:
-      # NextAuth configuration
-      NEXTAUTH_URL: http://localhost:8080
+      # NextAuth configuration (from .env file created by init-env.sh)
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-demo-nextauth-secret-minimum-32-characters-long}
       # Backend URL for server-side calls (Docker service name)
       SERVER_API_URL: http://backend:4000
