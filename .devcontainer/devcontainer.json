@@ -76,7 +76,7 @@
   },
 
   "containerEnv": {
-    "SEMIONT_VERSION": "0.2.26",
+    "SEMIONT_VERSION": "0.2.27",
     "SEMIONT_API_URL": "http://localhost:4000",
     "SEMIONT_ENV": "demo",
     "SEMIONT_ROOT": "${containerWorkspaceFolder}/project",
@@ -86,7 +86,7 @@
   },
 
   "remoteEnv": {
-    "SEMIONT_VERSION": "0.2.26",
+    "SEMIONT_VERSION": "0.2.27",
     "SEMIONT_API_URL": "http://localhost:4000",
     "SEMIONT_ENV": "demo",
     "SEMIONT_ROOT": "${containerWorkspaceFolder}/project",
