@@ -4,41 +4,30 @@ Configuration-driven demonstration of [Semiont](https://github.com/The-AI-Allian
 
 > **About Semiont**: A semantic annotation and knowledge extraction platform developed by [The AI Alliance](https://thealliance.ai/). This demo repository showcases Semiont's capabilities using published artifacts. For development and contributing, see the [main Semiont repository](https://github.com/The-AI-Alliance/semiont).
 
-## Try in GitHub Codespaces
+## Quick Start
 
-Launch the complete Semiont Agents Demo environment with one click (no installation required):
+Launch the complete demo environment with one click (no installation required):
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new/The-AI-Alliance/semiont-agents)
 
-Includes:
+**What's included:**
 
 - Semiont frontend, backend, and database (all pre-configured)
-- Demo account with sample data
+- Envoy proxy for production-like routing
+- Demo admin account with sample data
 - Interactive terminal UI for dataset operations
-- Ready to run in ~2 minutes
+- Ready in ~2 minutes
 
-See [.devcontainer/README.md](.devcontainer/README.md) for container details.
+**After launch:**
 
-## Quick Start
+1. Make port **8080** public (Ports tab → right-click → Public)
+2. Visit the URL shown in the terminal
+3. Login with the demo credentials displayed
+4. Run `npm run demo:interactive` to explore datasets
 
-```bash
-# Run in interactive terminal UI mode
-npm run demo:interactive
+See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 
-# Or run specific commands via CLI (using npm script with .env loaded)
-npm run demo -- <dataset> <command>
-
-# Example: Download and process Citizens United case
-npm run demo -- citizens_united download
-npm run demo -- citizens_united load
-npm run demo -- citizens_united annotate
-```
-
-## Prerequisites
-
-Everything is pre-configured when using GitHub Codespaces! Just click the badge above.
-
-## Modes
+## Demo Modes
 
 ### Interactive Terminal UI
 
@@ -46,13 +35,13 @@ Everything is pre-configured when using GitHub Codespaces! Just click the badge 
 npm run demo:interactive
 ```
 
-Full-screen terminal interface with three panels:
+Full-screen interface with three panels:
 
 - **Left**: Dataset list with command tree
 - **Bottom**: Detail view (config/status)
-- **Right**: Activity log (command output)
+- **Right**: Activity log (output)
 
-**Controls:** `↑/↓` or `j/k` (navigate), `Enter` (execute), `Tab` (cycle focus), `q` (quit)
+**Controls:** `↑/↓` or `j/k` (navigate), `Enter` (execute), `Tab` (switch panels), `q` (quit)
 
 See [docs/INTERACTIVE.md](docs/INTERACTIVE.md) for details.
 
@@ -62,38 +51,32 @@ See [docs/INTERACTIVE.md](docs/INTERACTIVE.md) for details.
 npm run demo -- <dataset> <command>
 ```
 
-**Datasets:** `citizens_united`, `prometheus_bound`, `freelaw_nh`, `arxiv`, `hiking`, and private datasets in `config/private/`
+**Available datasets:**
+
+- `citizens_united` - Supreme Court case (legal citations)
+- `prometheus_bound` - Ancient Greek play
+- `freelaw_nh` - New Hampshire case law
+- `arxiv` - Scientific papers
+- `hiking` - Outdoor guides
+- Private datasets in `config/private/`
 
 **Commands:**
 
-- `download` - Fetch content, cache in `data/tmp/`
-- `load` - Process cache, upload to backend, create ToC
-- `annotate` - Detect citations, create annotations
-- `validate` - Fetch all resources, verify content, show checksums
+- `download` - Fetch content, cache locally
+- `load` - Process, upload to backend, create table of contents
+- `annotate` - Detect patterns, create annotations
+- `validate` - Verify resources, show checksums
 
-**📚 [Dataset Configuration Guide](config/README.md)** - Learn how to add your own datasets
+**Example:**
 
-**🔧 [Semiont API Client Documentation](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client)** - Full API reference and usage examples
-
-## Project Structure
-
-```text
-demo/
-├── demo.ts                   # Main entry point
-├── src/                      # Reusable modules
-│   ├── auth.ts              # Authentication
-│   ├── annotations.ts       # Annotation creation/linking
-│   ├── chunking.ts          # Text chunking
-│   ├── resources.ts         # Upload & ToC creation
-│   ├── validation.ts        # Resource validation
-│   └── terminal-app.ts      # Interactive UI
-└── config/                   # Dataset configurations
-    ├── types.ts             # Config type definitions
-    ├── citizens_united/     # Each dataset has config.ts
-    └── private/             # Private datasets (gitignored)
+```bash
+npm run demo -- citizens_united download
+npm run demo -- citizens_united load
+npm run demo -- citizens_united annotate
+npm run demo -- citizens_united validate
 ```
 
-**📖 [Workflow Guide](docs/WORKFLOW.md)** - Detailed explanation of the four-phase processing workflow
+See [docs/WORKFLOW.md](docs/WORKFLOW.md) for the four-phase workflow details.
 
 ## Example Output
 
@@ -102,7 +85,7 @@ demo/
 ════════════════════════════════════════════
 
 🔐 Authentication
-   ✅ Authenticated as you@example.com
+   ✅ Authenticated as dev-xxxxx@example.com
 
 📥 Download
    ✅ Downloaded 123,456 characters
@@ -119,22 +102,72 @@ demo/
    ✅ Chunk 1: text/markdown [sha256:d4e5f6...]
 
 📋 Table of Contents:
-   http://localhost:3000/en/know/resource/abc123...
+   http://localhost:8080/en/know/resource/abc123...
 ```
 
-## Related Documentation
+## Architecture
 
+All traffic flows through Envoy proxy on port 8080 for production-like routing:
+
+```text
+Browser → http://localhost:8080 (Envoy) → Routes to Frontend/Backend
+Demo Scripts → http://backend:4000 (Direct Docker network access)
+```
+
+See [docs/ENVOY.md](docs/ENVOY.md) for routing details and [docs/CONTAINER.md](docs/CONTAINER.md) for container architecture.
+
+## Documentation
+
+**Getting Started:**
+
+- [Setup Guide](docs/SETUP.md) - Installation and first steps
+- [Interactive UI](docs/INTERACTIVE.md) - Terminal interface reference
 - [Workflow Guide](docs/WORKFLOW.md) - Four-phase processing workflow
-- [Interactive UI Guide](docs/INTERACTIVE.md) - Terminal UI details
-- [Dataset Configuration Guide](config/README.md) - Adding and configuring datasets
-- [Container Documentation](docs/CONTAINER.md) - Devcontainer setup and details
-- [Main Semiont Repository](https://github.com/The-AI-Alliance/semiont) - Development and contributing
+
+**Architecture:**
+
+- [Envoy Routing](docs/ENVOY.md) - Proxy configuration and troubleshooting
+- [Container Details](docs/CONTAINER.md) - Devcontainer internals
+
+**Configuration:**
+
+- [Dataset Configuration](config/README.md) - Adding and configuring datasets
+- [Semiont API Client](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client) - TypeScript SDK reference
+
+## Project Structure
+
+```text
+semiont-agents/
+├── demo.ts                   # Main entry point
+├── src/                      # Reusable modules
+│   ├── auth.ts              # Authentication
+│   ├── annotations.ts       # Annotation creation/linking
+│   ├── chunking.ts          # Text chunking
+│   ├── resources.ts         # Upload & ToC creation
+│   ├── validation.ts        # Resource validation
+│   └── terminal-app.ts      # Interactive UI
+├── config/                   # Dataset configurations
+│   ├── types.ts             # Config type definitions
+│   ├── citizens_united/     # Each dataset has config.ts
+│   └── private/             # Private datasets (gitignored)
+├── docs/                     # Documentation
+│   ├── SETUP.md             # Setup guide
+│   ├── ENVOY.md             # Routing architecture
+│   ├── WORKFLOW.md          # Processing workflow
+│   ├── INTERACTIVE.md       # Terminal UI reference
+│   └── CONTAINER.md         # Container details
+└── .devcontainer/           # Development environment
+    ├── docker-compose.yml   # Service orchestration
+    ├── envoy.yaml           # Envoy routing config
+    └── setup-demo.sh        # Initialization script
+```
 
 ## Contributing
 
 This is a demo repository showcasing Semiont. For contributions to Semiont itself, please see the [main Semiont repository](https://github.com/The-AI-Alliance/semiont).
 
 For improvements to this demo:
+
 - Issues and pull requests are welcome
 - Please follow our [Code of Conduct](CODE_OF_CONDUCT.md)
 - See [LICENSE](LICENSE) for licensing information

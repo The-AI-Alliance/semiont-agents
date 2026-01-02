@@ -137,7 +137,7 @@ npx tsx demo.ts citizens_united validate
    ✅ Chunk 2: text/markdown [sha256:i9j0k1l2...]
 
 📋 Table of Contents:
-   http://localhost:3000/en/know/resource/abc123...
+   http://localhost:8080/en/know/resource/abc123...
 ```
 
 ## Complete Workflow Example

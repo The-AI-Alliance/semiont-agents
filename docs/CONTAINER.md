@@ -378,27 +378,33 @@ This devcontainer provides a complete, production-ready Semiont demo environment
 
 ## What's Included
 
-- **Semiont Frontend** (0.2.0) - Web UI at http://localhost:3000
-- **Semiont Backend** (0.2.0) - API server at http://localhost:4000
+- **Envoy Proxy** - Single entry point at http://localhost:8080
+- **Semiont Frontend** - Web UI (accessed via Envoy)
+- **Semiont Backend** - API server (accessed via Envoy or direct at localhost:4000)
 - **PostgreSQL** (16) - Database at localhost:5432
-- **@semiont/cli** (0.2.0) - Command-line tool (global)
-- **@semiont/api-client** (0.2.0) - TypeScript SDK (in demo/)
+- **@semiont/cli** - Command-line tool (global)
+- **@semiont/api-client** - TypeScript SDK (in demo/)
 
 ## Architecture
 
 All Semiont components run as **published containers/packages** rather than building from source:
-- Backend: `ghcr.io/the-ai-alliance/semiont-backend:0.2.0`
-- Frontend: `ghcr.io/the-ai-alliance/semiont-frontend:0.2.0`
-- CLI: `@semiont/cli@0.2.0` (npm)
-- API Client: `@semiont/api-client@0.2.0` (npm)
+- Envoy: `envoyproxy/envoy:v1.28-latest`
+- Backend: `ghcr.io/the-ai-alliance/semiont-backend:latest`
+- Frontend: `ghcr.io/the-ai-alliance/semiont-frontend:latest`
+- CLI: `@semiont/cli@latest` (npm)
+- API Client: `@semiont/api-client@latest` (npm)
+
+**Routing**: All browser traffic flows through Envoy on port 8080. See [ENVOY.md](ENVOY.md) for details.
 
 ## Quick Start
 
 1. Open this folder in Codespaces or devcontainer
 2. Wait for setup to complete (~2 minutes)
-3. Visit http://localhost:3000
+3. Visit **http://localhost:8080** (Envoy proxy - single entry point)
 4. Login with demo credentials (shown in terminal)
 5. Run interactive demo: `npm run demo:interactive`
+
+See [SETUP.md](SETUP.md) for detailed setup instructions.
 
 ## Configuration
 

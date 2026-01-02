@@ -362,6 +362,40 @@ else
     print_success "Using existing demo admin user: $DEMO_EMAIL"
 fi
 
+# Update URLs for Codespaces if running in GitHub Codespaces
+if [ -n "${CODESPACE_NAME:-}" ]; then
+    print_status "Detected GitHub Codespaces environment, updating URLs..."
+
+    # GitHub Codespaces URL format: https://$CODESPACE_NAME-$PORT.app.github.dev
+    FRONTEND_URL="https://${CODESPACE_NAME}-3000.app.github.dev"
+    ENVOY_URL="https://${CODESPACE_NAME}-8080.app.github.dev"
+    SITE_DOMAIN="${CODESPACE_NAME}-8080.app.github.dev"
+
+    # Update environment config with Codespaces URLs using Node.js
+    cd /workspaces/semiont-agents
+    node -e "
+    const fs = require('fs');
+    const envFile = 'project/environments/demo.json';
+    const config = JSON.parse(fs.readFileSync(envFile, 'utf-8'));
+
+    config.site.domain = '${SITE_DOMAIN}';
+    config.services.frontend.url = '${FRONTEND_URL}';
+    config.services.frontend.publicURL = '${ENVOY_URL}';
+    config.services.frontend.allowedOrigins = [
+      '${SITE_DOMAIN}',
+      '${CODESPACE_NAME}-3000.app.github.dev'
+    ];
+    config.services.backend.publicURL = '${ENVOY_URL}';
+    config.services.backend.corsOrigin = '${ENVOY_URL}';
+
+    fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
+    "
+
+    print_success "URLs configured for Codespaces: ${ENVOY_URL}"
+else
+    print_success "Environment configuration set for localhost"
+fi
+
 # Save demo .env credentials
 print_status "Saving demo configuration..."
 cd /workspaces/semiont-agents
@@ -437,10 +471,27 @@ echo "=========================================="
 echo "   ✅ SEMIONT AGENTS DEMO READY!"
 echo "=========================================="
 echo ""
-echo "🌐 Frontend:  ${DEMO_FRONTEND_URL}"
-echo "🔌 Backend:   ${DEMO_BACKEND_URL}"
-echo "📊 Database:  postgresql://semiont:semiont@postgres:5432/semiont"
-echo "📁 Project:   $SEMIONT_ROOT"
+
+# Show appropriate URLs based on environment
+if [ -n "${CODESPACE_NAME:-}" ]; then
+    ENVOY_URL="https://${CODESPACE_NAME}-8080.app.github.dev"
+    echo "⚠️  IMPORTANT: Make port 8080 public (Envoy proxy - main entry point):"
+    echo "   • Go to the PORTS tab"
+    echo "   • Right-click port 8080 → Port Visibility → Public"
+    echo ""
+    echo "🌐 Open the application:"
+    echo "   ${ENVOY_URL}"
+    echo ""
+    echo "📊 Database:  postgresql://semiont:semiont@postgres:5432/semiont"
+    echo "📁 Project:   $SEMIONT_ROOT"
+else
+    echo "🌐 Open the application:"
+    echo "   http://localhost:8080 (Envoy proxy - recommended)"
+    echo ""
+    echo "📊 Database:  postgresql://semiont:semiont@postgres:5432/semiont"
+    echo "📁 Project:   $SEMIONT_ROOT"
+fi
+
 echo ""
 echo "👤 Demo Admin Account:"
 echo "   Email:    $DEMO_EMAIL"
@@ -469,6 +520,7 @@ echo ""
 echo "🔧 Useful Commands:"
 echo "   • Check services:  docker compose ps"
 echo "   • View logs:       docker compose logs -f"
+echo "   • Restart Envoy:   docker compose restart envoy"
 echo "   • Restart backend: docker compose restart backend"
 echo "   • CLI commands:    semiont --help"
 echo ""
