@@ -74,6 +74,9 @@
           "Semiont",
           "devcontainer",
           "Codespaces",
+          "Prisma",
+          "ANTHROPIC",
+          "NEO4J",
           "postgres",
           "postgresql",
           "ghcr"
