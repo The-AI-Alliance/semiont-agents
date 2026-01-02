@@ -97,6 +97,10 @@ log "  ✓ Templates copied"
 # Update URLs in demo.json for the detected environment
 if [ -n "${CODESPACE_NAME:-}" ]; then
     log "Updating Codespaces URLs in configuration..."
+
+    # For Codespaces, we also need direct frontend URL for internal config
+    FRONTEND_DIRECT_URL="https://${CODESPACE_NAME}-3000.app.github.dev"
+
     node -e "
     const fs = require('fs');
     const baseConfig = JSON.parse(fs.readFileSync('semiont.json', 'utf-8'));
@@ -104,9 +108,11 @@ if [ -n "${CODESPACE_NAME:-}" ]; then
     const config = JSON.parse(fs.readFileSync(envFile, 'utf-8'));
     config.site.domain = '${SITE_DOMAIN}';
     config.site.oauthAllowedDomains = ['${SITE_DOMAIN}', ...(baseConfig.site?.oauthAllowedDomains || [])];
-    config.services.frontend.url = '${FRONTEND_URL}';
-    config.services.backend.publicURL = '${BACKEND_URL}';
-    config.services.backend.corsOrigin = '${FRONTEND_URL}';
+    config.services.frontend.url = '${FRONTEND_DIRECT_URL}';
+    config.services.frontend.publicURL = '${ENVOY_URL}';
+    config.services.frontend.allowedOrigins = ['${SITE_DOMAIN}'];
+    config.services.backend.publicURL = '${ENVOY_URL}';
+    config.services.backend.corsOrigin = '${ENVOY_URL}';
     fs.writeFileSync(envFile, JSON.stringify(config, null, 2));
     "
     log "  ✓ URLs configured for Codespaces"
