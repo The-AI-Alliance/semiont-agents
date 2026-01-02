@@ -61,7 +61,14 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "typescript.updateImportsOnFileMove.enabled": "always",
         "workbench.startupEditor": "none",
+        "workbench.welcome.enabled": false,
+        "workbench.editorAssociations": {
+          "*.md": "default"
+        },
+        // Semiont Blue/Cyan Theme Colors
         "workbench.colorTheme": "Default Dark Modern",
+        "workbench.preferredDarkColorTheme": "Default Dark Modern",
+        "workbench.preferredLightColorTheme": "Default Light Modern",
         "cSpell.words": [
           "semiont",
           "Semiont",
