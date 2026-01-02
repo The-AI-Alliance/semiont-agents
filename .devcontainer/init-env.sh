@@ -60,7 +60,7 @@ log "Installing @semiont/cli@$SEMIONT_VERSION..."
 log "  Cleaning npm cache..."
 npm cache clean --force 2>&1 | head -5 || true
 log "  Cache cleaned, installing package..."
-npm install -g @semiont/cli@$SEMIONT_VERSION --registry https://registry.npmjs.org/ 2>&1 | grep -v "npm warn" || true
+npm install -g @semiont/cli@$SEMIONT_VERSION --registry https://registry.npmjs.org/ --legacy-peer-deps 2>&1 | grep -v "npm warn" || true
 
 # Show the package version from npm
 SEMIONT_PACKAGE_VERSION=$(npm list -g @semiont/cli --depth=0 2>/dev/null | grep @semiont/cli | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' || echo "unknown")
