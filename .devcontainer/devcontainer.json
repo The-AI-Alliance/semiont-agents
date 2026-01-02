@@ -9,22 +9,23 @@
   "postCreateCommand": "bash .devcontainer/validate-versions.sh && npm install",
   "postAttachCommand": "bash .devcontainer/welcome.sh",
 
-  "forwardPorts": [3000, 4000, 5432],
+  "forwardPorts": [8080, 4000, 9901],
 
   "portsAttributes": {
-    "3000": {
-      "label": "Frontend (Semiont UI)",
+    "8080": {
+      "label": "Envoy Proxy (Main Entry Point)",
       "onAutoForward": "notify",
       "protocol": "http"
     },
     "4000": {
-      "label": "Backend (API)",
+      "label": "Backend API (Direct)",
       "onAutoForward": "silent",
       "protocol": "http"
     },
-    "5432": {
-      "label": "PostgreSQL",
-      "onAutoForward": "silent"
+    "9901": {
+      "label": "Envoy Admin",
+      "onAutoForward": "silent",
+      "protocol": "http"
     }
   },
 
