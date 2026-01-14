@@ -14,7 +14,7 @@ import { fetchFirstNDocuments, convertLegalCaseDocument } from '../../src/huggin
 import { printInfo, printSuccess } from '../../src/display.js';
 
 const HUGGINGFACE_DATASET = 'free-law/nh';
-const DOCUMENT_COUNT = 4;
+const DOCUMENT_COUNT = 100;
 
 export const config: DatasetConfig = {
   name: 'freelaw_nh',
@@ -22,10 +22,10 @@ export const config: DatasetConfig = {
   emoji: '⚖️ ',
   shouldChunk: false, // Each document is a separate resource
   isMultiDocument: true, // Uses loadDocuments instead of loadText
-  entityTypes: ['legal', 'case-law', 'new-hampshire'],
+  entityTypes: ['legal', 'case-law', 'new-hampshire', 'LegalCitation'],
   createTableOfContents: true,
   tocTitle: 'New Hampshire Supreme Court Cases (Sample)',
-  detectCitations: false, // Could add citation detection in future
+  detectCitations: true, // Enable citation detection for legal documents
   cacheFile: '/tmp/freelaw_nh.json',
 
   downloadContent: async () => {
