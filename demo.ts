@@ -305,7 +305,6 @@ async function loadCommand(datasetName: string) {
       printSectionHeader('📤', 2, 'Upload Documents');
       chunkIds = await uploadDocuments(documents, client, {
         entityTypes: dataset.entityTypes,
-        dataDir: DATA_DIR,
       });
 
       // Pass 3: Create Table of Contents (if needed)
@@ -314,7 +313,6 @@ async function loadCommand(datasetName: string) {
         const result = await createDocumentTableOfContents(documents, client, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
-          dataDir: DATA_DIR,
         });
         tocId = result.tocId;
         references = result.references;
@@ -354,7 +352,6 @@ async function loadCommand(datasetName: string) {
       printSectionHeader('📤', 3, 'Upload Chunks');
       chunkIds = await uploadChunks(chunks, client, {
         entityTypes: dataset.entityTypes,
-        dataDir: DATA_DIR,
       });
 
       // Pass 4: Create Table of Contents (if needed)
@@ -363,7 +360,6 @@ async function loadCommand(datasetName: string) {
         const result = await createTableOfContents(chunks, client, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
-          dataDir: DATA_DIR,
         });
         tocId = result.tocId;
         references = result.references;
@@ -377,9 +373,7 @@ async function loadCommand(datasetName: string) {
 
       // Pass 5: Create Stub References
       printSectionHeader('🔗', 5, 'Create Stub References');
-      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, {
-        dataDir: DATA_DIR,
-      });
+      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, {});
 
       // Pass 6: Link References to Documents
       printSectionHeader('🎯', 6, 'Link References to Documents');
