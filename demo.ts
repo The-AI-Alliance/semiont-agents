@@ -472,7 +472,15 @@ async function annotateCommand(datasetName: string) {
 
     // Re-chunk the text to get chunk content for annotation detection
     let chunks: ChunkInfo[];
-    if (dataset.shouldChunk) {
+    if (dataset.isMultiDocument) {
+      // For multi-document datasets, load the documents and treat each as a chunk
+      const documents = await dataset.loadDocuments!();
+      chunks = documents.map((doc, index) => ({
+        title: doc.title,
+        content: typeof doc.content === 'string' ? doc.content : doc.content.toString(),
+        partNumber: index + 1,
+      }));
+    } else if (dataset.shouldChunk) {
       if (dataset.useSmartChunking) {
         chunks = chunkText(state.formattedText, dataset.chunkSize!, `${dataset.displayName} - Part`);
       } else {
