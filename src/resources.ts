@@ -7,8 +7,7 @@
 import type { SemiontApiClient, ResourceUri } from '@semiont/api-client';
 import { resourceUri } from '@semiont/api-client';
 import type { ChunkInfo } from './chunking';
-import { printBatchProgress, printSuccess, printFilesystemPath, printInfo } from './display';
-import { getLayer1Path } from './filesystem-utils';
+import { printBatchProgress, printSuccess, printInfo } from './display';
 
 /**
  * Document info for multi-document uploads
@@ -51,10 +50,6 @@ export async function uploadChunks(
     const resourceId = resourceUri(response.resource['@id']);
     documentIds.push(resourceId);
     printSuccess(resourceId, 7);
-
-    if (dataDir) {
-      printFilesystemPath('Layer 1', getLayer1Path(resourceId, dataDir));
-    }
   }
 
   printSuccess(`All ${chunks.length} chunks uploaded`);
@@ -161,10 +156,6 @@ export async function uploadDocuments(
     const resourceId = resourceUri(response.resource['@id']);
     documentIds.push(resourceId);
     printSuccess(resourceId, 7);
-
-    if (dataDir) {
-      printFilesystemPath('Layer 1', getLayer1Path(resourceId, dataDir));
-    }
   }
 
   printSuccess(`All ${documents.length} documents uploaded`);
