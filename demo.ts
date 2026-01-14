@@ -59,7 +59,6 @@ import {
 import { createStubReferences, linkReferences } from './src/annotations';
 import { showDocumentHistory } from './src/history';
 import { detectCitations } from './src/legal-citations';
-import { getLayer1Path } from './src/filesystem-utils';
 import { TerminalApp } from './src/terminal-app.js';
 import { validateResources, formatValidationResults } from './src/validation.js';
 import {
@@ -73,7 +72,6 @@ import {
   printResults,
   printCompletion,
   printError,
-  printFilesystemPath,
 } from './src/display';
 
 // ============================================================================
@@ -156,12 +154,11 @@ const DATASETS = await loadDatasets();
 // ENVIRONMENT CONFIGURATION
 // ============================================================================
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:4000';
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const SEMIONT_URL = process.env.SEMIONT_URL || process.env.BACKEND_URL || 'http://localhost:8080';
 const AUTH_EMAIL = process.env.AUTH_EMAIL || 'you@example.com';
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
-const DATA_DIR = process.env.DATA_DIR || '/tmp/semiont/data/uploads';
+const DATA_DIR = process.env.DATA_DIR || 'data';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 
 if (!AUTH_EMAIL && !ACCESS_TOKEN) {
@@ -281,7 +278,7 @@ async function loadCommand(datasetName: string) {
     }
 
     const client = new SemiontApiClient({
-      baseUrl: baseUrl(BACKEND_URL),
+      baseUrl: baseUrl(SEMIONT_URL),
       logger,
     });
 
@@ -398,7 +395,7 @@ async function loadCommand(datasetName: string) {
         chunkIds,
         linkedCount,
         totalCount: references.length,
-        frontendUrl: FRONTEND_URL,
+        frontendUrl: SEMIONT_URL,
       });
     } else {
       // Pass 4: Show Document History (for non-TOC datasets)
@@ -414,9 +411,7 @@ async function loadCommand(datasetName: string) {
         throw new Error(`Invalid resource ID format: ${chunkIds[0]}`);
       }
       const resourceId = parts[1];
-      console.log(`   ${FRONTEND_URL}/en/know/resource/${resourceId}`);
-      console.log();
-      printFilesystemPath('Layer 1', getLayer1Path(chunkIds[0], DATA_DIR));
+      console.log(`   ${SEMIONT_URL}/en/know/resource/${resourceId}`);
     }
 
     // Save state for annotate command
@@ -451,7 +446,7 @@ async function annotateCommand(datasetName: string) {
 
   try {
     const client = new SemiontApiClient({
-      baseUrl: baseUrl(BACKEND_URL),
+      baseUrl: baseUrl(SEMIONT_URL),
       logger,
     });
 
@@ -574,7 +569,7 @@ async function validateCommand(datasetName: string) {
 
   try {
     const client = new SemiontApiClient({
-      baseUrl: baseUrl(BACKEND_URL),
+      baseUrl: baseUrl(SEMIONT_URL),
       logger,
     });
 
