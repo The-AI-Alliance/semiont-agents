@@ -21,7 +21,6 @@ export interface DocumentInfo {
 
 export interface UploadOptions {
   entityTypes?: string[];
-  dataDir?: string;
 }
 
 /**
@@ -33,7 +32,7 @@ export async function uploadChunks(
   options: UploadOptions = {}
 ): Promise<ResourceUri[]> {
   const documentIds: ResourceUri[] = [];
-  const { entityTypes = [], dataDir } = options;
+  const { entityTypes = [] } = options;
 
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
@@ -67,7 +66,6 @@ export interface TableOfContentsReference {
 export interface TableOfContentsOptions {
   title: string;
   entityTypes?: string[];
-  dataDir?: string;
 }
 
 /**
@@ -78,7 +76,7 @@ export async function createTableOfContents(
   client: SemiontApiClient,
   options: TableOfContentsOptions
 ): Promise<{ tocId: ResourceUri; references: TableOfContentsReference[] }> {
-  const { title, entityTypes = [], dataDir } = options;
+  const { title, entityTypes = [] } = options;
 
   // Build markdown content with timestamp to ensure unique document ID
   const timestamp = new Date().toISOString();
@@ -116,10 +114,6 @@ export async function createTableOfContents(
   const tocId = resourceUri(response.resource['@id']);
   printSuccess(`Created ToC: ${tocId}`);
 
-  if (dataDir) {
-    printFilesystemPath('Layer 1', getLayer1Path(tocId, dataDir));
-  }
-
   return { tocId, references };
 }
 
@@ -133,7 +127,7 @@ export async function uploadDocuments(
   options: UploadOptions = {}
 ): Promise<ResourceUri[]> {
   const documentIds: ResourceUri[] = [];
-  const { entityTypes = [], dataDir } = options;
+  const { entityTypes = [] } = options;
 
   for (let i = 0; i < documents.length; i++) {
     const doc = documents[i];
@@ -171,7 +165,7 @@ export async function createDocumentTableOfContents(
   client: SemiontApiClient,
   options: TableOfContentsOptions
 ): Promise<{ tocId: ResourceUri; references: TableOfContentsReference[] }> {
-  const { title, entityTypes = [], dataDir } = options;
+  const { title, entityTypes = [] } = options;
 
   // Build markdown content with timestamp to ensure unique document ID
   const timestamp = new Date().toISOString();
@@ -208,10 +202,6 @@ export async function createDocumentTableOfContents(
   const response = await client.createResource(request);
   const tocId = resourceUri(response.resource['@id']);
   printSuccess(`Created ToC: ${tocId}`);
-
-  if (dataDir) {
-    printFilesystemPath('Layer 1', getLayer1Path(tocId, dataDir));
-  }
 
   return { tocId, references };
 }

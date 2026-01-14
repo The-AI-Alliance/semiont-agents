@@ -6,12 +6,11 @@
 
 import type { SemiontApiClient, ResourceUri } from '@semiont/api-client';
 import { resourceUri, resourceAnnotationUri } from '@semiont/api-client';
-import { printBatchProgress, printSuccess, printWarning, printAnnotationCreated, printFilesystemPath } from './display';
-import { getLayer2Path, getLayer3Path } from './filesystem-utils';
+import { printBatchProgress, printSuccess, printWarning, printAnnotationCreated } from './display';
 import type { TableOfContentsReference } from './resources';
 
 export interface CreateStubReferencesOptions {
-  dataDir?: string;
+  // Future options can be added here
 }
 
 /**
@@ -24,7 +23,6 @@ export async function createStubReferences(
   client: SemiontApiClient,
   options: CreateStubReferencesOptions = {}
 ): Promise<TableOfContentsReference[]> {
-  const { dataDir } = options;
 
   for (let i = 0; i < references.length; i++) {
     const ref = references[i];
@@ -59,11 +57,6 @@ export async function createStubReferences(
     ref.annotationId = response.annotation.id;
 
     printAnnotationCreated(response.annotation.id);
-
-    if (dataDir) {
-      printFilesystemPath('Layer 2 (event log)', getLayer2Path(tocId, dataDir));
-      printFilesystemPath('Layer 3 (projection)', getLayer3Path(tocId, dataDir));
-    }
   }
 
   printSuccess(`Created ${references.length} stub annotations`);
