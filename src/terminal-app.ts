@@ -6,7 +6,7 @@
 
 import blessed from 'blessed';
 import { existsSync, readFileSync } from 'node:fs';
-import type { DatasetConfigWithPaths } from '../config/types.js';
+import type { DatasetConfigWithPaths } from './types.js';
 import { downloadCommand, loadCommand, annotateCommand, validateCommand } from '../demo.js';
 
 interface CommandStatus {

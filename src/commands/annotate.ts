@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { SemiontApiClient, baseUrl, resourceUri, type ResourceUri } from '@semiont/api-client';
-import type { DatasetConfigWithPaths } from '../../config/types.js';
+import type { DatasetConfigWithPaths } from '../types.js';
 import { DATASETS } from '../datasets/loader.js';
 import { chunkBySize, chunkText, type ChunkInfo } from '../chunking.js';
 import { authenticate } from '../auth.js';

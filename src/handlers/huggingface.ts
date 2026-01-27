@@ -6,7 +6,7 @@
 
 import { writeFileSync, readFileSync } from 'node:fs';
 import type { DatasetHandler, DatasetYamlConfig } from './types.js';
-import type { DocumentInfo } from '../../config/types.js';
+import type { DocumentInfo } from '../types.js';
 import { fetchFirstNDocuments, convertLegalCaseDocument } from '../huggingface.js';
 import { printInfo, printSuccess } from '../display.js';
 

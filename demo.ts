@@ -43,7 +43,7 @@ import { SemiontApiClient, baseUrl, resourceUri, type ResourceUri } from '@semio
 import winston from 'winston';
 
 // Dataset configuration types
-import type { DatasetConfig, DatasetConfigWithPaths } from './config/types.js';
+import type { DatasetConfig, DatasetConfigWithPaths } from './src/types.js';
 
 // Local modules
 import { chunkBySize, chunkText, type ChunkInfo } from './src/chunking';

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { SemiontApiClient, baseUrl, type ResourceUri } from '@semiont/api-client';
-import type { DatasetConfigWithPaths } from '../../config/types.js';
+import type { DatasetConfigWithPaths } from '../types.js';
 import { DATASETS } from '../datasets/loader.js';
 import { authenticate } from '../auth.js';
 import { validateResources, formatValidationResults } from '../validation.js';

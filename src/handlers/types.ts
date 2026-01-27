@@ -5,7 +5,7 @@
  * Configs (YAML files) reference handlers and provide configuration data.
  */
 
-import type { DocumentInfo } from '../../config/types.js';
+import type { DocumentInfo } from '../types.js';
 
 /**
  * Configuration data from YAML file

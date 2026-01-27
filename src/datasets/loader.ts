@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as yaml from 'js-yaml';
-import type { DatasetConfig, DatasetConfigWithPaths } from '../../config/types.js';
+import type { DatasetConfig, DatasetConfigWithPaths } from '../types.js';
 import type { DatasetYamlConfig } from '../handlers/types.js';
 import { HANDLERS } from '../handlers/index.js';
 

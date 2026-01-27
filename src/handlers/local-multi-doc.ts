@@ -7,7 +7,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, extname } from 'node:path';
 import type { DatasetHandler, DatasetYamlConfig } from './types.js';
-import type { DocumentInfo } from '../../config/types.js';
+import type { DocumentInfo } from '../types.js';
 import { printInfo, printSuccess } from '../display.js';
 
 export const localMultiDocHandler: DatasetHandler = {
