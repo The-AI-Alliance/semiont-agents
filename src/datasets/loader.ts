@@ -53,17 +53,17 @@ function yamlToDatasetConfig(yamlConfig: DatasetYamlConfig): DatasetConfig {
 }
 
 /**
- * Dynamically load all dataset configurations from the config directory
+ * Dynamically load all dataset configurations from the structured-knowledge submodule
  * Each dataset should be in its own subdirectory with a config.yaml file
- * Scans both config/ and config/private/ directories
+ * Scans both structured-knowledge/scenarios/ and structured-knowledge/scenarios/private/ directories
  */
 export async function loadDatasets(): Promise<Record<string, DatasetConfigWithPaths>> {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  // In dev: src/datasets/loader.ts -> ../../config
-  // In built bundle: dist/cli.js -> ../config
+  // In dev: src/datasets/loader.ts -> ../../structured-knowledge/scenarios
+  // In built bundle: dist/cli.js -> ../structured-knowledge/scenarios
   const isBundled = __filename.includes('/dist/');
-  const configDir = isBundled ? join(__dirname, '../config') : join(__dirname, '../../config');
+  const configDir = isBundled ? join(__dirname, '../structured-knowledge/scenarios') : join(__dirname, '../../structured-knowledge/scenarios');
 
   const datasets: Record<string, DatasetConfigWithPaths> = {};
 
@@ -116,8 +116,8 @@ export async function loadDatasets(): Promise<Record<string, DatasetConfigWithPa
     }
   }
 
-  await scanDirectory(configDir, 'config');
-  await scanDirectory(join(configDir, 'private'), 'config/private');
+  await scanDirectory(configDir, 'structured-knowledge/scenarios');
+  await scanDirectory(join(configDir, 'private'), 'structured-knowledge/scenarios/private');
 
   return datasets;
 }

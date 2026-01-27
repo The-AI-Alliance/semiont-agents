@@ -1,0 +1,3 @@
+[submodule "structured-knowledge"]
+	path = structured-knowledge
+	url = git@github.com:The-AI-Alliance/structured-knowledge.git
