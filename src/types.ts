@@ -47,5 +47,5 @@ export interface DatasetConfig {
  * Created internally by demo.ts during dataset loading
  */
 export interface DatasetConfigWithPaths extends DatasetConfig {
-  stateFile: string; // Computed: config/{dataset_dir}/.state.json
+  stateFile: string; // Computed: structured-knowledge/scenarios/{dataset_dir}/.state.json
 }

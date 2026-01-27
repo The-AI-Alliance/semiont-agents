@@ -79,21 +79,21 @@ import {
 // ============================================================================
 
 /**
- * Dynamically load all dataset configurations from the config directory
+ * Dynamically load all dataset configurations from the structured-knowledge submodule
  * Each dataset should be in its own subdirectory with a config.ts file
- * Scans both config/ and config/private/ directories
+ * Scans both structured-knowledge/scenarios/ and structured-knowledge/scenarios/private/ directories
  */
 async function loadDatasets(): Promise<Record<string, DatasetConfigWithPaths>> {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  const configDir = join(__dirname, 'config');
+  const configDir = join(__dirname, 'structured-knowledge/scenarios');
 
   const datasets: Record<string, DatasetConfigWithPaths> = {};
 
   /**
    * Scan a directory for dataset configurations
-   * @param basePath - The base directory to scan (e.g., 'config' or 'config/private')
-   * @param relativePathPrefix - The relative path prefix for state files (e.g., 'config' or 'config/private')
+   * @param basePath - The base directory to scan (e.g., 'structured-knowledge/scenarios' or 'structured-knowledge/scenarios/private')
+   * @param relativePathPrefix - The relative path prefix for state files (e.g., 'structured-knowledge/scenarios' or 'structured-knowledge/scenarios/private')
    */
   async function scanDirectory(basePath: string, relativePathPrefix: string) {
     if (!existsSync(basePath)) {
@@ -138,11 +138,11 @@ async function loadDatasets(): Promise<Record<string, DatasetConfigWithPaths>> {
     }
   }
 
-  // Scan public configs in config/
-  await scanDirectory(configDir, 'config');
+  // Scan public configs in structured-knowledge/scenarios/
+  await scanDirectory(configDir, 'structured-knowledge/scenarios');
 
-  // Scan private configs in config/private/
-  await scanDirectory(join(configDir, 'private'), 'config/private');
+  // Scan private configs in structured-knowledge/scenarios/private/
+  await scanDirectory(join(configDir, 'private'), 'structured-knowledge/scenarios/private');
 
   return datasets;
 }
