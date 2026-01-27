@@ -29,8 +29,8 @@ export const localMultiDocHandler: DatasetHandler = {
     const files = readdirSync(dirPath);
 
     for (const file of files) {
-      // Skip config files and hidden files
-      if (file === 'config.ts' || file === 'config.yaml' || file === '.state.json' || file.startsWith('.')) {
+      // Skip config files, README, and hidden files
+      if (file === 'config.ts' || file === 'config.yaml' || file === '.state.json' || file === 'README.md' || file.startsWith('.')) {
         continue;
       }
 
