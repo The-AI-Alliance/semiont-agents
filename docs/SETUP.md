@@ -50,11 +50,17 @@ The fastest way to get started:
 
 ### Steps
 
-1. **Clone the repository**
+1. **Clone the repository with submodules**
 
    ```bash
-   git clone https://github.com/The-AI-Alliance/semiont-agents.git
+   git clone --recurse-submodules https://github.com/The-AI-Alliance/semiont-agents.git
    cd semiont-agents
+   ```
+
+   Or if you already cloned without submodules:
+
+   ```bash
+   git submodule update --init --recursive
    ```
 
 2. **Open in VS Code**
@@ -286,7 +292,7 @@ See [ENVOY.md](ENVOY.md) for routing details.
 
 1. **Explore the demo** - Run `npm run demo:interactive`
 2. **Try CLI commands** - See [WORKFLOW.md](WORKFLOW.md)
-3. **Add your own dataset** - See [config/README.md](../config/README.md)
+3. **Add your own dataset** - See [structured-knowledge scenarios](https://github.com/The-AI-Alliance/structured-knowledge/blob/main/scenarios/README.md)
 4. **Learn the architecture** - See [ENVOY.md](ENVOY.md) and [CONTAINER.md](CONTAINER.md)
 
 ## Additional Resources

@@ -27,6 +27,8 @@ Launch the complete demo environment with one click (no installation required):
 
 See [docs/SETUP.md](docs/SETUP.md) for detailed setup instructions.
 
+> **Note**: Dataset configurations are stored in the [structured-knowledge](https://github.com/The-AI-Alliance/structured-knowledge) repository (linked as a git submodule). GitHub Codespaces automatically initializes submodules. For local setup, see the setup guide.
+
 ## Demo Modes
 
 ### Interactive Terminal UI
@@ -38,7 +40,7 @@ npm run demo:interactive
 Full-screen interface with three panels:
 
 - **Left**: Dataset list with command tree
-- **Bottom**: Detail view (config/status)
+- **Bottom**: Detail view (dataset config/status)
 - **Right**: Activity log (output)
 
 **Controls:** `↑/↓` or `j/k` (navigate), `Enter` (execute), `Tab` (switch panels), `q` (quit)
@@ -58,7 +60,7 @@ npm run demo -- <dataset> <command>
 - `freelaw_nh` - New Hampshire case law
 - `arxiv` - Scientific papers
 - `hiking` - Outdoor guides
-- Private datasets in `config/private/`
+- Private datasets in `structured-knowledge/scenarios/private/`
 
 **Commands:**
 
@@ -131,7 +133,7 @@ See [docs/ENVOY.md](docs/ENVOY.md) for routing details and [docs/CONTAINER.md](d
 
 **Configuration:**
 
-- [Dataset Configuration](config/README.md) - Adding and configuring datasets
+- [Dataset Configuration](https://github.com/The-AI-Alliance/structured-knowledge/blob/main/scenarios/README.md) - Adding and configuring datasets
 - [Semiont API Client](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client) - TypeScript SDK reference
 
 ## Project Structure
@@ -146,10 +148,12 @@ semiont-agents/
 │   ├── resources.ts         # Upload & ToC creation
 │   ├── validation.ts        # Resource validation
 │   └── terminal-app.ts      # Interactive UI
-├── config/                   # Dataset configurations
-│   ├── types.ts             # Config type definitions
-│   ├── citizens_united/     # Each dataset has config.ts
-│   └── private/             # Private datasets (gitignored)
+├── structured-knowledge/     # Dataset configurations (git submodule)
+│   └── scenarios/           # YAML configs for each dataset
+│       ├── citizens_united/
+│       ├── freelaw_nh/
+│       └── private/         # Private datasets (gitignored)
+├── src/types.ts             # Config type definitions
 ├── docs/                     # Documentation
 │   ├── SETUP.md             # Setup guide
 │   ├── ENVOY.md             # Routing architecture

@@ -80,4 +80,4 @@ Statuses update automatically after each command completes.
 - Commands spawn in separate processes with full output capture
 - The interface updates in real-time as commands execute
 - All standard demo commands work the same way as CLI mode
-- Private datasets (in `config/private/`) are included if configured
+- Private datasets (in `structured-knowledge/scenarios/private/`) are included if configured

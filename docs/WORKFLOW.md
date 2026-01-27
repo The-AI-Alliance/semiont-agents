@@ -76,7 +76,7 @@ export const config: DatasetConfig = {
 };
 ```
 
-See [Dataset Configuration Guide](../config/README.md) for details.
+See [Dataset Configuration Guide](https://github.com/The-AI-Alliance/structured-knowledge/blob/main/scenarios/README.md) for details.
 
 ## Annotate Phase
 
@@ -182,6 +182,6 @@ External Source (Cornell LII, arXiv, etc.)
 
 ## Related Documentation
 
-- [Dataset Configuration Guide](../config/README.md) - Configure chunking, ToC, and annotations
+- [Dataset Configuration Guide](https://github.com/The-AI-Alliance/structured-knowledge/blob/main/scenarios/README.md) - Configure chunking, ToC, and annotations
 - [Interactive UI Guide](INTERACTIVE.md) - Terminal UI for running workflows
 - [Semiont API Client](https://github.com/The-AI-Alliance/semiont/tree/main/packages/api-client) - API reference
