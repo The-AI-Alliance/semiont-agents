@@ -32,7 +32,10 @@ try {
       'commander',
       'dotenv',
       'bcrypt',
-      'js-yaml'
+      'js-yaml',
+      'winston',
+      '@colors/colors',
+      'colors'
     ],
     banner: {
       js: '#!/usr/bin/env node\n'
