@@ -8,7 +8,7 @@ import type { SemiontApiClient } from '@semiont/api-client';
 import type { AccessToken, ResourceUri } from '@semiont/core';
 import { resourceUri } from '@semiont/core';
 import type { ChunkInfo } from './chunking';
-import { printBatchProgress, printSuccess, printInfo } from './display';
+import { printBatchProgress, printSuccess, printInfo, printWarning } from './display';
 
 /**
  * Document info for multi-document uploads
@@ -24,6 +24,17 @@ export interface UploadOptions {
   entityTypes?: string[];
 }
 
+export interface UploadResult<T> {
+  ids: ResourceUri[];
+  uploaded: T[];
+  failed: UploadFailure[];
+}
+
+export interface UploadFailure {
+  title: string;
+  error: string;
+}
+
 /**
  * Upload text chunks as resources
  */
@@ -32,29 +43,49 @@ export async function uploadChunks(
   client: SemiontApiClient,
   auth: AccessToken,
   options: UploadOptions = {}
-): Promise<ResourceUri[]> {
-  const documentIds: ResourceUri[] = [];
+): Promise<UploadResult<ChunkInfo>> {
+  const ids: ResourceUri[] = [];
+  const uploaded: ChunkInfo[] = [];
+  const failed: UploadFailure[] = [];
   const { entityTypes = [] } = options;
 
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i];
     printBatchProgress(i + 1, chunks.length, `Uploading ${chunk.title}...`);
 
-    const request = {
-      name: chunk.title,
-      file: Buffer.from(chunk.content),
-      format: 'text/plain' as const,
-      entityTypes,
-    };
+    try {
+      const request = {
+        name: chunk.title,
+        file: Buffer.from(chunk.content),
+        format: 'text/plain' as const,
+        entityTypes,
+      };
 
-    const response = await client.createResource(request, { auth });
-    const resourceId = resourceUri(response.resource['@id']);
-    documentIds.push(resourceId);
-    printSuccess(resourceId, 7);
+      const response = await client.createResource(request, { auth });
+      const resourceId = resourceUri(response.resource['@id']);
+      ids.push(resourceId);
+      uploaded.push(chunk);
+      printSuccess(resourceId, 7);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      failed.push({ title: chunk.title, error: message });
+      printWarning(`Failed: ${message}`, 7);
+    }
   }
 
-  printSuccess(`All ${chunks.length} chunks uploaded`);
-  return documentIds;
+  printUploadSummary(chunks.length, ids.length, failed);
+  return { ids, uploaded, failed };
+}
+
+function printUploadSummary(total: number, succeeded: number, failed: UploadFailure[]): void {
+  if (failed.length === 0) {
+    printSuccess(`All ${total} items uploaded`);
+  } else {
+    printWarning(`${succeeded} of ${total} uploaded, ${failed.length} failed:`);
+    for (const f of failed) {
+      printWarning(`  ${f.title}: ${f.error}`, 5);
+    }
+  }
 }
 
 export interface TableOfContentsReference {
@@ -129,35 +160,44 @@ export async function uploadDocuments(
   client: SemiontApiClient,
   auth: AccessToken,
   options: UploadOptions = {}
-): Promise<ResourceUri[]> {
-  const documentIds: ResourceUri[] = [];
+): Promise<UploadResult<DocumentInfo>> {
+  const ids: ResourceUri[] = [];
+  const uploaded: DocumentInfo[] = [];
+  const failed: UploadFailure[] = [];
   const { entityTypes = [] } = options;
 
   for (let i = 0; i < documents.length; i++) {
     const doc = documents[i];
     printBatchProgress(i + 1, documents.length, `Uploading ${doc.title}...`);
 
-    // Handle both string and Buffer content
-    const fileBuffer = Buffer.isBuffer(doc.content) ? doc.content : Buffer.from(doc.content);
+    try {
+      // Handle both string and Buffer content
+      const fileBuffer = Buffer.isBuffer(doc.content) ? doc.content : Buffer.from(doc.content);
 
-    // Use format from document if provided, otherwise default to text/plain
-    const format = doc.format || 'text/plain';
+      // Use format from document if provided, otherwise default to text/plain
+      const format = doc.format || 'text/plain';
 
-    const request = {
-      name: doc.title,
-      file: fileBuffer,
-      format,
-      entityTypes,
-    };
+      const request = {
+        name: doc.title,
+        file: fileBuffer,
+        format,
+        entityTypes,
+      };
 
-    const response = await client.createResource(request, { auth });
-    const resourceId = resourceUri(response.resource['@id']);
-    documentIds.push(resourceId);
-    printSuccess(resourceId, 7);
+      const response = await client.createResource(request, { auth });
+      const resourceId = resourceUri(response.resource['@id']);
+      ids.push(resourceId);
+      uploaded.push(doc);
+      printSuccess(resourceId, 7);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      failed.push({ title: doc.title, error: message });
+      printWarning(`Failed: ${message}`, 7);
+    }
   }
 
-  printSuccess(`All ${documents.length} documents uploaded`);
-  return documentIds;
+  printUploadSummary(documents.length, ids.length, failed);
+  return { ids, uploaded, failed };
 }
 
 /**

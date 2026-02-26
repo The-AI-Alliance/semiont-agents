@@ -303,14 +303,15 @@ async function loadCommand(datasetName: string) {
 
       // Pass 2: Upload Documents
       printSectionHeader('📤', 2, 'Upload Documents');
-      chunkIds = await uploadDocuments(documents, client, auth, {
+      const uploadResult = await uploadDocuments(documents, client, auth, {
         entityTypes: dataset.entityTypes,
       });
+      chunkIds = uploadResult.ids;
 
       // Pass 3: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 3, 'Create Table of Contents');
-        const result = await createDocumentTableOfContents(documents, client, auth, {
+        const result = await createDocumentTableOfContents(uploadResult.uploaded, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });
@@ -350,14 +351,15 @@ async function loadCommand(datasetName: string) {
 
       // Pass 3: Upload Chunks
       printSectionHeader('📤', 3, 'Upload Chunks');
-      chunkIds = await uploadChunks(chunks, client, auth, {
+      const chunkResult = await uploadChunks(chunks, client, auth, {
         entityTypes: dataset.entityTypes,
       });
+      chunkIds = chunkResult.ids;
 
       // Pass 4: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 4, 'Create Table of Contents');
-        const result = await createTableOfContents(chunks, client, auth, {
+        const result = await createTableOfContents(chunkResult.uploaded, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });

@@ -55,6 +55,14 @@ export const localMultiDocHandler: DatasetHandler = {
             content,
             format: mimeType,
           });
+        } else if (ext === '.pdf') {
+          // PDF document
+          const content = readFileSync(filePath);
+          documents.push({
+            title: file.replace(/\.pdf$/, ''),
+            content,
+            format: 'application/pdf',
+          });
         }
       } catch (error) {
         printInfo(`  Skipping ${file}: ${error instanceof Error ? error.message : error}`, 3);
