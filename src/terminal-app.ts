@@ -7,7 +7,10 @@
 import blessed from 'blessed';
 import { existsSync, readFileSync } from 'node:fs';
 import type { DatasetConfigWithPaths } from './types.js';
-import { downloadCommand, loadCommand, annotateCommand, validateCommand } from '../demo.js';
+import { downloadCommand } from './commands/download.js';
+import { loadCommand } from './commands/load.js';
+import { annotateCommand } from './commands/annotate.js';
+import { validateCommand } from './commands/validate.js';
 
 interface CommandStatus {
   dataset: string;

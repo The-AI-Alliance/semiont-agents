@@ -45,6 +45,6 @@ export async function downloadCommand(datasetName: string): Promise<void> {
     console.log(`\n💡 Next step: Run "demo ${datasetName} load" to process and upload\n`);
   } catch (error) {
     printError(error as Error);
-    process.exit(1);
+    throw error;
   }
 }

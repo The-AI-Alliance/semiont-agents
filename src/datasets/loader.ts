@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as yaml from 'js-yaml';
 import type { DatasetConfig, DatasetConfigWithPaths } from '../types.js';
@@ -7,13 +7,33 @@ import type { DatasetYamlConfig } from '../handlers/types.js';
 import { HANDLERS } from '../handlers/index.js';
 
 /**
- * Convert YAML config to DatasetConfig with handler functions
+ * Resolve cacheFile path. Absolute paths (including /tmp/) are kept as-is.
+ * Relative paths are resolved against the scenario directory.
  */
-function yamlToDatasetConfig(yamlConfig: DatasetYamlConfig): DatasetConfig {
+function resolveCacheFile(cacheFile: string | undefined, scenarioDir: string, name: string): string {
+  if (!cacheFile) {
+    return `/tmp/${name}.cache`;
+  }
+  if (isAbsolute(cacheFile)) {
+    return cacheFile;
+  }
+  return join(scenarioDir, cacheFile);
+}
+
+/**
+ * Convert YAML config to DatasetConfig with handler functions.
+ * scenarioDir is the absolute path to the scenario directory containing config.yaml.
+ */
+function yamlToDatasetConfig(yamlConfig: DatasetYamlConfig, scenarioDir: string): DatasetConfig {
   const handler = HANDLERS[yamlConfig.handler];
   if (!handler) {
     throw new Error(`Unknown handler: ${yamlConfig.handler}. Available handlers: ${Object.keys(HANDLERS).join(', ')}`);
   }
+
+  const resolvedCacheFile = resolveCacheFile(yamlConfig.cacheFile, scenarioDir, yamlConfig.name);
+
+  // Update the yamlConfig's cacheFile so handlers see the resolved path
+  const resolvedConfig = { ...yamlConfig, cacheFile: resolvedCacheFile };
 
   return {
     name: yamlConfig.name,
@@ -26,7 +46,7 @@ function yamlToDatasetConfig(yamlConfig: DatasetYamlConfig): DatasetConfig {
     createTableOfContents: yamlConfig.createTableOfContents || false,
     tocTitle: yamlConfig.tocTitle,
     detectCitations: yamlConfig.detectCitations || false,
-    cacheFile: yamlConfig.cacheFile || `/tmp/${yamlConfig.name}.cache`,
+    cacheFile: resolvedCacheFile,
     isMultiDocument: yamlConfig.isMultiDocument,
     extractionConfig: yamlConfig.extractionConfig ? {
       startPattern: new RegExp(yamlConfig.extractionConfig.startPattern),
@@ -34,16 +54,16 @@ function yamlToDatasetConfig(yamlConfig: DatasetYamlConfig): DatasetConfig {
     } : undefined,
 
     // Bind handler functions with the config
-    downloadContent: () => handler.download(yamlConfig),
+    downloadContent: () => handler.download(resolvedConfig),
     loadText: yamlConfig.isMultiDocument ? undefined : async () => {
-      const result = await handler.load(yamlConfig);
+      const result = await handler.load(resolvedConfig);
       if (typeof result !== 'string') {
         throw new Error(`Handler ${yamlConfig.handler} returned documents but isMultiDocument is false`);
       }
       return result;
     },
     loadDocuments: yamlConfig.isMultiDocument ? async () => {
-      const result = await handler.load(yamlConfig);
+      const result = await handler.load(resolvedConfig);
       if (typeof result === 'string') {
         throw new Error(`Handler ${yamlConfig.handler} returned string but isMultiDocument is true`);
       }
@@ -88,7 +108,8 @@ export async function loadDatasets(): Promise<Record<string, DatasetConfigWithPa
           // Load YAML config with handlers
           const yamlContent = readFileSync(yamlPath, 'utf-8');
           const yamlConfig = yaml.load(yamlContent) as DatasetYamlConfig;
-          const config = yamlToDatasetConfig(yamlConfig);
+          const scenarioDir = join(basePath, entry.name);
+          const config = yamlToDatasetConfig(yamlConfig, scenarioDir);
 
           const configWithPaths: DatasetConfigWithPaths = {
             ...config,

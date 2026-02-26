@@ -61,9 +61,7 @@ export async function loadCommand(datasetName: string): Promise<void> {
 
     // Check if cache file exists
     if (!existsSync(dataset.cacheFile)) {
-      printError(new Error(`Cache file not found: ${dataset.cacheFile}`));
-      console.log(`\n💡 Run "demo ${datasetName} download" first to download the content.\n`);
-      process.exit(1);
+      throw new Error(`Cache file not found: ${dataset.cacheFile}. Run "demo ${datasetName} download" first.`);
     }
 
     const client = new SemiontApiClient({
@@ -211,6 +209,6 @@ export async function loadCommand(datasetName: string): Promise<void> {
     }
   } catch (error) {
     printError(error as Error);
-    process.exit(1);
+    throw error;
   }
 }

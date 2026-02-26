@@ -115,6 +115,6 @@ export async function validateCommand(datasetName: string): Promise<void> {
     printCompletion();
   } catch (error) {
     printError(error as Error);
-    process.exit(1);
+    throw error;
   }
 }

@@ -85,8 +85,7 @@ export async function annotateCommand(datasetName: string): Promise<void> {
     }
 
     if (!state.chunkIds || state.chunkIds.length === 0) {
-      printError(new Error('No chunks found in state. Run the load command first.'));
-      process.exit(1);
+      throw new Error('No chunks found in state. Run the load command first.');
     }
 
     printSuccess(`Loaded ${state.chunkIds.length} chunk IDs`);
@@ -166,6 +165,6 @@ export async function annotateCommand(datasetName: string): Promise<void> {
     printCompletion();
   } catch (error) {
     printError(error as Error);
-    process.exit(1);
+    throw error;
   }
 }

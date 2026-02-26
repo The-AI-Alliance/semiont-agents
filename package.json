@@ -8,8 +8,8 @@
     "build": "npm run typecheck && node build.mjs",
     "typecheck": "tsc --noEmit",
     "dev": "tsx src/cli.ts",
-    "demo": "demo",
-    "demo:interactive": "demo interactive"
+    "demo": "node dist/cli.js",
+    "demo:interactive": "TERM=xterm-256color node dist/cli.js interactive"
   },
   "dependencies": {
     "@semiont/api-client": "^0.2.34",

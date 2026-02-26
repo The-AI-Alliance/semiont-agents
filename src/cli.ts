@@ -48,7 +48,7 @@ program
     const command = commandArg as CommandName;  // Type-safe after validation
 
     // Dispatch to type-safe command
-    return COMMANDS[command](datasetArg);
+    return COMMANDS[command](datasetArg).catch(() => process.exit(1));
   });
 
 program.parse();
