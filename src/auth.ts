@@ -5,7 +5,8 @@
  */
 
 import type { SemiontApiClient } from '@semiont/api-client';
-import { accessToken, email } from '@semiont/api-client';
+import type { AccessToken } from '@semiont/core';
+import { accessToken, email } from '@semiont/core';
 import { printInfo, printSuccess } from './display';
 
 export interface AuthConfig {
@@ -15,29 +16,33 @@ export interface AuthConfig {
 }
 
 /**
- * Authenticate with the backend using email/password or access token
+ * Authenticate with the backend using email/password or access token.
+ * Returns an AccessToken for use in subsequent API calls.
  */
-export async function authenticate(client: SemiontApiClient, config: AuthConfig): Promise<void> {
+export async function authenticate(client: SemiontApiClient, config: AuthConfig): Promise<AccessToken> {
   if (config.accessToken) {
     printInfo('Using provided access token...');
-    client.setAccessToken(accessToken(config.accessToken));
+    const token = accessToken(config.accessToken);
     printSuccess('Access token configured');
+    return token;
   } else if (config.email && config.password) {
     printInfo(`Authenticating as ${config.email}...`);
     try {
-      await client.authenticatePassword(email(config.email), config.password);
+      const response = await client.authenticatePassword(email(config.email), config.password);
       printSuccess(`Authenticated successfully`);
-    } catch (error: any) {
+      return accessToken(response.token);
+    } catch (error: unknown) {
+      const err = error as Error & { status?: number; details?: unknown };
       console.error('\n❌ Authentication failed:');
       console.error(`   Email: ${config.email}`);
-      console.error(`   Error: ${error.message || error}`);
-      if (error.status) {
-        console.error(`   HTTP Status: ${error.status}`);
+      console.error(`   Error: ${err.message || error}`);
+      if (err.status) {
+        console.error(`   HTTP Status: ${err.status}`);
       }
-      if (error.details) {
-        console.error(`   Details: ${JSON.stringify(error.details, null, 2)}`);
+      if (err.details) {
+        console.error(`   Details: ${JSON.stringify(err.details, null, 2)}`);
       }
-      throw new Error(`Authentication failed for ${config.email}: ${error.message || error}`);
+      throw new Error(`Authentication failed for ${config.email}: ${err.message || error}`);
     }
   } else if (config.email) {
     console.error('\n❌ Configuration error:');

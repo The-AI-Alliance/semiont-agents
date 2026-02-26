@@ -1,5 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { SemiontApiClient, baseUrl, type ResourceUri } from '@semiont/api-client';
+import { SemiontApiClient } from '@semiont/api-client';
+import type { ResourceUri } from '@semiont/core';
+import { baseUrl } from '@semiont/core';
 import type { DatasetConfigWithPaths } from '../types.js';
 import { DATASETS } from '../datasets/loader.js';
 import { authenticate } from '../auth.js';
@@ -62,7 +64,7 @@ export async function validateCommand(datasetName: string): Promise<void> {
 
     // Pass 0: Authentication
     printSectionHeader('🔐', 0, 'Authentication');
-    await authenticate(client, {
+    const auth = await authenticate(client, {
       email: AUTH_EMAIL,
       password: AUTH_PASSWORD,
       accessToken: ACCESS_TOKEN,
@@ -92,7 +94,7 @@ export async function validateCommand(datasetName: string): Promise<void> {
 
     // Pass 2: Validate Resources
     printSectionHeader('✓', 2, 'Validate Resources');
-    const results = await validateResources(allResources, client);
+    const results = await validateResources(allResources, client, auth);
 
     // Display results
     const formattedLines = formatValidationResults(results);

@@ -12,8 +12,8 @@
     "demo:interactive": "demo interactive"
   },
   "dependencies": {
-    "@semiont/api-client": "^0.2.27",
-    "@semiont/cli": "^0.2.27",
+    "@semiont/api-client": "^0.2.34",
+    "@semiont/cli": "^0.2.34",
     "blessed": "^0.1.81",
     "commander": "^14.0.2",
     "js-yaml": "^4.1.1",

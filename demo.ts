@@ -39,7 +39,9 @@ import { Command } from 'commander';
 import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { SemiontApiClient, baseUrl, resourceUri, type ResourceUri } from '@semiont/api-client';
+import { SemiontApiClient } from '@semiont/api-client';
+import type { ResourceUri } from '@semiont/core';
+import { baseUrl, resourceUri } from '@semiont/core';
 import winston from 'winston';
 
 // Dataset configuration types
@@ -54,7 +56,6 @@ import {
   createTableOfContents,
   createDocumentTableOfContents,
   type TableOfContentsReference,
-  type DocumentInfo,
 } from './src/resources';
 import { createStubReferences, linkReferences } from './src/annotations';
 import { showDocumentHistory } from './src/history';
@@ -158,7 +159,6 @@ const SEMIONT_URL = process.env.SEMIONT_URL || process.env.BACKEND_URL || 'http:
 const AUTH_EMAIL = process.env.AUTH_EMAIL || 'you@example.com';
 const AUTH_PASSWORD = process.env.AUTH_PASSWORD;
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
-const DATA_DIR = process.env.DATA_DIR || 'data';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'debug';
 
 if (!AUTH_EMAIL && !ACCESS_TOKEN) {
@@ -284,7 +284,7 @@ async function loadCommand(datasetName: string) {
 
     // Pass 0: Authentication
     printSectionHeader('🔐', 0, 'Authentication');
-    await authenticate(client, {
+    const auth = await authenticate(client, {
       email: AUTH_EMAIL,
       password: AUTH_PASSWORD,
       accessToken: ACCESS_TOKEN,
@@ -303,14 +303,14 @@ async function loadCommand(datasetName: string) {
 
       // Pass 2: Upload Documents
       printSectionHeader('📤', 2, 'Upload Documents');
-      chunkIds = await uploadDocuments(documents, client, {
+      chunkIds = await uploadDocuments(documents, client, auth, {
         entityTypes: dataset.entityTypes,
       });
 
       // Pass 3: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 3, 'Create Table of Contents');
-        const result = await createDocumentTableOfContents(documents, client, {
+        const result = await createDocumentTableOfContents(documents, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });
@@ -350,14 +350,14 @@ async function loadCommand(datasetName: string) {
 
       // Pass 3: Upload Chunks
       printSectionHeader('📤', 3, 'Upload Chunks');
-      chunkIds = await uploadChunks(chunks, client, {
+      chunkIds = await uploadChunks(chunks, client, auth, {
         entityTypes: dataset.entityTypes,
       });
 
       // Pass 4: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 4, 'Create Table of Contents');
-        const result = await createTableOfContents(chunks, client, {
+        const result = await createTableOfContents(chunks, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });
@@ -373,15 +373,15 @@ async function loadCommand(datasetName: string) {
 
       // Pass 5: Create Stub References
       printSectionHeader('🔗', 5, 'Create Stub References');
-      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, {});
+      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, auth, {});
 
       // Pass 6: Link References to Documents
       printSectionHeader('🎯', 6, 'Link References to Documents');
-      const linkedCount = await linkReferences(tocId, referencesWithIds, client);
+      const linkedCount = await linkReferences(tocId, referencesWithIds, client, auth);
 
       // Pass 7: Show Document History
       printSectionHeader('📜', 7, 'Document History');
-      await showDocumentHistory(tocId, client);
+      await showDocumentHistory(tocId, client, auth);
 
       // Pass 8: Print Results
       printResults({
@@ -394,7 +394,7 @@ async function loadCommand(datasetName: string) {
     } else {
       // Pass 4: Show Document History (for non-TOC datasets)
       printSectionHeader('📜', 4, 'Document History');
-      await showDocumentHistory(chunkIds[0], client);
+      await showDocumentHistory(chunkIds[0], client, auth);
 
       // Print results
       printSectionHeader('✨', 5, 'Results');
@@ -446,7 +446,7 @@ async function annotateCommand(datasetName: string) {
 
     // Pass 0: Authentication
     printSectionHeader('🔐', 0, 'Authentication');
-    await authenticate(client, {
+    const auth = await authenticate(client, {
       email: AUTH_EMAIL,
       password: AUTH_PASSWORD,
       accessToken: ACCESS_TOKEN,
@@ -532,7 +532,7 @@ async function annotateCommand(datasetName: string) {
               value: 'LegalCitation',
               purpose: 'tagging',
             }],
-          });
+          }, { auth });
 
           totalAnnotations++;
         }
@@ -543,7 +543,7 @@ async function annotateCommand(datasetName: string) {
 
     // Pass 3: Show Document History
     printSectionHeader('📜', 3, 'Document History');
-    await showDocumentHistory(state.chunkIds[0], client);
+    await showDocumentHistory(state.chunkIds[0], client, auth);
 
     // Pass 4: Print Summary
     console.log();
@@ -577,7 +577,7 @@ async function validateCommand(datasetName: string) {
 
     // Pass 0: Authentication
     printSectionHeader('🔐', 0, 'Authentication');
-    await authenticate(client, {
+    const auth = await authenticate(client, {
       email: AUTH_EMAIL,
       password: AUTH_PASSWORD,
       accessToken: ACCESS_TOKEN,
@@ -607,7 +607,7 @@ async function validateCommand(datasetName: string) {
 
     // Pass 2: Validate Resources
     printSectionHeader('✓', 2, 'Validate Resources');
-    const results = await validateResources(allResources, client);
+    const results = await validateResources(allResources, client, auth);
 
     // Display results
     const formattedLines = formatValidationResults(results);

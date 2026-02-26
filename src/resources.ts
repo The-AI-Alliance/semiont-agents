@@ -4,8 +4,9 @@
  * Reusable utilities for creating and managing resources.
  */
 
-import type { SemiontApiClient, ResourceUri } from '@semiont/api-client';
-import { resourceUri } from '@semiont/api-client';
+import type { SemiontApiClient } from '@semiont/api-client';
+import type { AccessToken, ResourceUri } from '@semiont/core';
+import { resourceUri } from '@semiont/core';
 import type { ChunkInfo } from './chunking';
 import { printBatchProgress, printSuccess, printInfo } from './display';
 
@@ -16,7 +17,7 @@ export interface DocumentInfo {
   title: string;
   content: string | Buffer; // Support both text and binary content
   format?: 'text/plain' | 'text/markdown' | 'image/jpeg' | 'image/png' | string; // MIME type
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UploadOptions {
@@ -29,6 +30,7 @@ export interface UploadOptions {
 export async function uploadChunks(
   chunks: ChunkInfo[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: UploadOptions = {}
 ): Promise<ResourceUri[]> {
   const documentIds: ResourceUri[] = [];
@@ -45,7 +47,7 @@ export async function uploadChunks(
       entityTypes,
     };
 
-    const response = await client.createResource(request);
+    const response = await client.createResource(request, { auth });
     const resourceId = resourceUri(response.resource['@id']);
     documentIds.push(resourceId);
     printSuccess(resourceId, 7);
@@ -74,6 +76,7 @@ export interface TableOfContentsOptions {
 export async function createTableOfContents(
   chunks: ChunkInfo[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: TableOfContentsOptions
 ): Promise<{ tocId: ResourceUri; references: TableOfContentsReference[] }> {
   const { title, entityTypes = [] } = options;
@@ -110,7 +113,7 @@ export async function createTableOfContents(
     entityTypes: [...entityTypes, 'table-of-contents'],
   };
 
-  const response = await client.createResource(request);
+  const response = await client.createResource(request, { auth });
   const tocId = resourceUri(response.resource['@id']);
   printSuccess(`Created ToC: ${tocId}`);
 
@@ -124,6 +127,7 @@ export async function createTableOfContents(
 export async function uploadDocuments(
   documents: DocumentInfo[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: UploadOptions = {}
 ): Promise<ResourceUri[]> {
   const documentIds: ResourceUri[] = [];
@@ -142,11 +146,11 @@ export async function uploadDocuments(
     const request = {
       name: doc.title,
       file: fileBuffer,
-      format: format as any, // API accepts various MIME types
+      format,
       entityTypes,
     };
 
-    const response = await client.createResource(request);
+    const response = await client.createResource(request, { auth });
     const resourceId = resourceUri(response.resource['@id']);
     documentIds.push(resourceId);
     printSuccess(resourceId, 7);
@@ -163,6 +167,7 @@ export async function uploadDocuments(
 export async function createDocumentTableOfContents(
   documents: DocumentInfo[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: TableOfContentsOptions
 ): Promise<{ tocId: ResourceUri; references: TableOfContentsReference[] }> {
   const { title, entityTypes = [] } = options;
@@ -199,7 +204,7 @@ export async function createDocumentTableOfContents(
     entityTypes: [...entityTypes, 'table-of-contents'],
   };
 
-  const response = await client.createResource(request);
+  const response = await client.createResource(request, { auth });
   const tocId = resourceUri(response.resource['@id']);
   printSuccess(`Created ToC: ${tocId}`);
 

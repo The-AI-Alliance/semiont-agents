@@ -4,8 +4,9 @@
  * Reusable utilities for creating and linking annotations.
  */
 
-import type { SemiontApiClient, ResourceUri } from '@semiont/api-client';
-import { resourceUri, resourceAnnotationUri } from '@semiont/api-client';
+import type { SemiontApiClient } from '@semiont/api-client';
+import type { AccessToken, ResourceUri } from '@semiont/core';
+import { resourceUri, resourceAnnotationUri } from '@semiont/core';
 import { printBatchProgress, printSuccess, printWarning, printAnnotationCreated } from './display';
 import type { TableOfContentsReference } from './resources';
 
@@ -21,6 +22,7 @@ export async function createStubReferences(
   references: TableOfContentsReference[],
   chunkIds: ResourceUri[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: CreateStubReferencesOptions = {}
 ): Promise<TableOfContentsReference[]> {
 
@@ -51,7 +53,7 @@ export async function createStubReferences(
         value: 'part-reference',
         purpose: 'tagging',
       }],
-    });
+    }, { auth });
 
     // Store the FULL annotation ID (includes URL prefix)
     ref.annotationId = response.annotation.id;
@@ -74,6 +76,7 @@ export async function linkReferences(
   tocId: ResourceUri,
   references: TableOfContentsReference[],
   client: SemiontApiClient,
+  auth: AccessToken,
   options: LinkReferencesOptions = {}
 ): Promise<number> {
   const { showProgress = true } = options;
@@ -106,7 +109,7 @@ export async function linkReferences(
             purpose: 'linking',
           },
         }],
-      });
+      }, { auth });
 
       if (showProgress) {
         printSuccess('Linked', 7);

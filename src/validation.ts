@@ -6,7 +6,8 @@
 
 import { writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import type { SemiontApiClient, ResourceUri } from '@semiont/api-client';
+import type { SemiontApiClient } from '@semiont/api-client';
+import type { AccessToken, ResourceUri } from '@semiont/core';
 
 export interface ValidationResult {
   uri: ResourceUri;
@@ -23,14 +24,15 @@ export interface ValidationResult {
  */
 export async function validateResources(
   resourceIds: ResourceUri[],
-  client: SemiontApiClient
+  client: SemiontApiClient,
+  auth: AccessToken
 ): Promise<ValidationResult[]> {
   const results: ValidationResult[] = [];
 
   for (const uri of resourceIds) {
     try {
       // Fetch the resource using the api-client
-      const { data, contentType } = await client.getResourceRepresentation(uri);
+      const { data, contentType } = await client.getResourceRepresentation(uri, { auth });
 
       // Convert ArrayBuffer to Buffer
       const buffer = Buffer.from(data);

@@ -4,16 +4,17 @@
  * Utilities for retrieving and displaying document event history.
  */
 
-import type { SemiontApiClient, StoredEvent } from '@semiont/api-client';
-import { resourceUri } from '@semiont/api-client';
+import type { SemiontApiClient } from '@semiont/api-client';
+import type { AccessToken, StoredEvent } from '@semiont/core';
+import { resourceUri } from '@semiont/core';
 import { printInfo, printWarning, printEventBreakdown, printEvent, type EventDetails } from './display';
 
 /**
  * Show document event history
  */
-export async function showDocumentHistory(tocId: string, client: SemiontApiClient): Promise<void> {
+export async function showDocumentHistory(tocId: string, client: SemiontApiClient, auth: AccessToken): Promise<void> {
   try {
-    const data = await client.getResourceEvents(resourceUri(tocId));
+    const data = await client.getResourceEvents(resourceUri(tocId), { auth });
 
     if (!data.events || data.events.length === 0) {
       printWarning('No events found for document');

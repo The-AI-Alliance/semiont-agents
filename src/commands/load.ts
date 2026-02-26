@@ -1,5 +1,7 @@
 import { existsSync, writeFileSync } from 'node:fs';
-import { SemiontApiClient, baseUrl, type ResourceUri } from '@semiont/api-client';
+import { SemiontApiClient } from '@semiont/api-client';
+import type { ResourceUri } from '@semiont/core';
+import { baseUrl } from '@semiont/core';
 import { DATASETS } from '../datasets/loader.js';
 import { chunkBySize, chunkText, type ChunkInfo } from '../chunking.js';
 import { authenticate } from '../auth.js';
@@ -70,7 +72,7 @@ export async function loadCommand(datasetName: string): Promise<void> {
 
     // Pass 0: Authentication
     printSectionHeader('🔐', 0, 'Authentication');
-    await authenticate(client, {
+    const auth = await authenticate(client, {
       email: AUTH_EMAIL,
       password: AUTH_PASSWORD,
       accessToken: ACCESS_TOKEN,
@@ -89,14 +91,14 @@ export async function loadCommand(datasetName: string): Promise<void> {
 
       // Pass 2: Upload Documents
       printSectionHeader('📤', 2, 'Upload Documents');
-      chunkIds = await uploadDocuments(documents, client, {
+      chunkIds = await uploadDocuments(documents, client, auth, {
         entityTypes: dataset.entityTypes,
       });
 
       // Pass 3: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 3, 'Create Table of Contents');
-        const result = await createDocumentTableOfContents(documents, client, {
+        const result = await createDocumentTableOfContents(documents, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });
@@ -136,14 +138,14 @@ export async function loadCommand(datasetName: string): Promise<void> {
 
       // Pass 3: Upload Chunks
       printSectionHeader('📤', 3, 'Upload Chunks');
-      chunkIds = await uploadChunks(chunks, client, {
+      chunkIds = await uploadChunks(chunks, client, auth, {
         entityTypes: dataset.entityTypes,
       });
 
       // Pass 4: Create Table of Contents (if needed)
       if (dataset.createTableOfContents) {
         printSectionHeader('📑', 4, 'Create Table of Contents');
-        const result = await createTableOfContents(chunks, client, {
+        const result = await createTableOfContents(chunks, client, auth, {
           title: dataset.tocTitle!,
           entityTypes: dataset.entityTypes,
         });
@@ -159,15 +161,15 @@ export async function loadCommand(datasetName: string): Promise<void> {
 
       // Pass 5: Create Stub References
       printSectionHeader('🔗', 5, 'Create Stub References');
-      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, {});
+      const referencesWithIds = await createStubReferences(tocId, references, chunkIds, client, auth, {});
 
       // Pass 6: Link References to Documents
       printSectionHeader('🎯', 6, 'Link References to Documents');
-      const linkedCount = await linkReferences(tocId, referencesWithIds, client);
+      const linkedCount = await linkReferences(tocId, referencesWithIds, client, auth);
 
       // Pass 7: Show Document History
       printSectionHeader('📜', 7, 'Document History');
-      await showDocumentHistory(tocId, client);
+      await showDocumentHistory(tocId, client, auth);
 
       // Pass 8: Print Results
       printResults({
@@ -180,7 +182,7 @@ export async function loadCommand(datasetName: string): Promise<void> {
     } else {
       // Pass 4: Show Document History (for non-TOC datasets)
       printSectionHeader('📜', 4, 'Document History');
-      await showDocumentHistory(chunkIds[0], client);
+      await showDocumentHistory(chunkIds[0], client, auth);
 
       // Print results
       printSectionHeader('✨', 5, 'Results');

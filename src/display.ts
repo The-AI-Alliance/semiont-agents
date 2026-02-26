@@ -4,7 +4,7 @@
  * Console output utilities for progress tracking and results display.
  */
 
-import type { ResourceUri } from '@semiont/api-client';
+import type { ResourceUri } from '@semiont/core';
 import type { ChunkInfo } from './chunking';
 
 /**
