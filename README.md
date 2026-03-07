@@ -14,9 +14,9 @@ Run Semiont locally with no repo clone required -- just the published CLI:
 npm install -g @semiont/cli
 mkdir my_project && cd my_project
 export SEMIONT_ROOT=$(pwd) SEMIONT_ENV=local
-semiont init
-semiont provision
-semiont start
+semiont init --verbose
+semiont provision --verbose
+semiont start --verbose
 semiont useradd --email you@example.com --generate-password --admin
 ```
 

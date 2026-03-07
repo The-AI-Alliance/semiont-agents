@@ -34,7 +34,7 @@ export SEMIONT_ENV=local
 ### 4. Initialize the Project
 
 ```bash
-semiont init
+semiont init --verbose
 ```
 
 This creates `semiont.json` and `environments/local.json`.
@@ -50,7 +50,7 @@ Edit this file to set database credentials, API keys, or adjust ports.
 ### 6. Provision Services
 
 ```bash
-semiont provision
+semiont provision --verbose
 ```
 
 Generates `.env` files for backend and frontend, processes proxy configuration, and pushes the database schema.
@@ -58,7 +58,7 @@ Generates `.env` files for backend and frontend, processes proxy configuration, 
 ### 7. Start Services
 
 ```bash
-semiont start
+semiont start --verbose
 ```
 
 Starts the database container, backend, frontend, and proxy.
