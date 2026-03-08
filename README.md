@@ -49,7 +49,7 @@ See [.devcontainer/README.md](.devcontainer/README.md) for Codespaces and devcon
 
 ### Local Setup
 
-Run Semiont locally using the CLI and a clone of the Semiont repository. See [docs/LOCAL-SEMIONT.md](docs/LOCAL-SEMIONT.md) for the full walkthrough.
+Run Semiont locally using published npm packages -- no repo clone needed. See [docs/LOCAL-SEMIONT.md](docs/LOCAL-SEMIONT.md) for the full walkthrough.
 
 ## Running the Demo
 

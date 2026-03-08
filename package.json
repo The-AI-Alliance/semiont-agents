@@ -13,7 +13,9 @@
   },
   "dependencies": {
     "@semiont/api-client": "^0.2.36",
+    "@semiont/backend": "^0.2.36",
     "@semiont/cli": "^0.2.36",
+    "@semiont/frontend": "^0.2.36",
     "blessed": "^0.1.81",
     "commander": "^14.0.2",
     "handlebars": "^4.7.8",

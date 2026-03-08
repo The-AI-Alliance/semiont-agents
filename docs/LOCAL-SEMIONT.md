@@ -1,46 +1,45 @@
 # Local Semiont
 
-Run Semiont locally using the CLI and a clone of the Semiont repository.
+Run Semiont locally using published npm packages -- no need to clone the Semiont repository.
 
-The default local environment configures backend and frontend as **posix** services (local Node.js processes) and the database as a **container** service (Docker/Podman). Provisioning posix services requires the Semiont source repository because the CLI generates `.env` files, installs dependencies, builds the applications, and runs database migrations directly in the repo.
+The CLI provisions backend and frontend from pre-built `@semiont/backend` and `@semiont/frontend` npm packages, generates `.env` files, and runs database migrations. The database runs as a container (Docker/Podman).
 
 ## Prerequisites
 
 - **Node.js** v20 or higher
 - **Docker or Podman** (for PostgreSQL container)
-- **Git** (to clone the Semiont repository)
 
 ## Setup
 
-### 1. Clone the Semiont Repository
-
-```bash
-git clone https://github.com/The-AI-Alliance/semiont.git
-```
-
-### 2. Install the CLI
+### 1. Install the CLI
 
 ```bash
 npm install -g @semiont/cli
 ```
 
-### 3. Create a Project Directory
+### 2. Create a Project Directory
 
 ```bash
 mkdir my_semiont_project
 cd my_semiont_project
 ```
 
+### 3. Install Backend and Frontend
+
+```bash
+npm install @semiont/backend @semiont/frontend
+```
+
+This installs pre-built, ready-to-run packages. No compilation or repo clone needed.
+
 ### 4. Set Environment Variables
 
 ```bash
 export SEMIONT_ROOT=$(pwd)
 export SEMIONT_ENV=local
-export SEMIONT_REPO=/path/to/semiont
 ```
 
-- `SEMIONT_ROOT` tells the CLI where your project lives, so you can run commands from any directory.
-- `SEMIONT_REPO` points to your Semiont repository clone. The CLI uses this to find backend and frontend source code for provisioning.
+`SEMIONT_ROOT` tells the CLI where your project lives, so you can run commands from any directory.
 
 ### 5. Initialize the Project
 
@@ -59,8 +58,8 @@ cat environments/local.json
 Edit this file to set database credentials, API keys, or adjust ports.
 
 The default `local.json` configures:
-- **backend** and **frontend** as `posix` platform (local processes, requires `SEMIONT_REPO`)
-- **database** as `container` platform (Docker/Podman, no repo needed)
+- **backend** and **frontend** as `posix` platform (local Node.js processes, resolved from installed npm packages)
+- **database** as `container` platform (Docker/Podman)
 - **graph** as `external` platform (Neo4j, requires connection details)
 - **inference** as `external` platform (Anthropic, requires API key)
 
@@ -83,7 +82,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 semiont provision --verbose
 ```
 
-This generates `.env` files for backend and frontend (inside `SEMIONT_REPO`), installs npm dependencies, runs Prisma migrations, and processes proxy configuration.
+This generates `.env` files for backend and frontend, runs database migrations using the Prisma schema bundled in the backend package, and processes proxy configuration.
 
 ### 8. Start Services
 
@@ -147,8 +146,6 @@ semiont provision --service frontend
 semiont provision --service backend
 ```
 
-## Relationship to Upstream
+## Developer Mode
 
-The [upstream LOCAL-DEVELOPMENT.md](https://github.com/The-AI-Alliance/semiont/blob/main/docs/LOCAL-DEVELOPMENT.md) documents the same setup from the perspective of the Semiont repository itself. This guide covers setting up a **downstream project** (like semiont-workflows) that uses Semiont as infrastructure via `@semiont/cli` and the cloned repo.
-
-If you need to modify Semiont itself (backend, frontend, or CLI source), use the upstream guide instead.
+If you need to modify Semiont itself (backend, frontend, or CLI), see the [Semiont repository](https://github.com/The-AI-Alliance/semiont) for development setup instructions.
