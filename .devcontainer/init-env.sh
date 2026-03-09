@@ -69,7 +69,7 @@ if [ -n "${CODESPACE_NAME:-}" ]; then
 
     // Database and proxy are managed by docker-compose, not by the CLI.
     // Set them to 'external' so semiont provision/start doesn't try to create containers.
-    config.services.database.platform = 'external';
+    config.services.database.platform = { type: 'external' };
     config.services.database.host = 'postgres';
     config.services.database.port = 5432;
     config.services.database.environment.POSTGRES_USER = 'semiont';
@@ -77,7 +77,7 @@ if [ -n "${CODESPACE_NAME:-}" ]; then
     config.services.database.environment.POSTGRES_DB = 'semiont';
 
     if (config.services.proxy) {
-      config.services.proxy.platform = 'external';
+      config.services.proxy.platform = { type: 'external' };
     }
 
     // Codespaces URLs: all public-facing URLs through Envoy
@@ -99,7 +99,7 @@ else
 
     // Database and proxy are managed by docker-compose, not by the CLI.
     // Set them to 'external' so semiont provision/start doesn't try to create containers.
-    config.services.database.platform = 'external';
+    config.services.database.platform = { type: 'external' };
     config.services.database.host = 'postgres';
     config.services.database.port = 5432;
     config.services.database.environment.POSTGRES_USER = 'semiont';
@@ -107,7 +107,7 @@ else
     config.services.database.environment.POSTGRES_DB = 'semiont';
 
     if (config.services.proxy) {
-      config.services.proxy.platform = 'external';
+      config.services.proxy.platform = { type: 'external' };
     }
 
     fs.writeFileSync('environments/local.json', JSON.stringify(config, null, 2) + '\n');
