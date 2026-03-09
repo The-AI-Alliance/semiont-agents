@@ -2,12 +2,12 @@
 
 Run Semiont locally using published npm packages -- no need to clone the Semiont repository.
 
-The CLI provisions backend and frontend from pre-built `@semiont/backend` and `@semiont/frontend` npm packages, generates `.env` files, and runs database migrations. The database runs as a container (Docker/Podman).
+The CLI installs and provisions backend and frontend from pre-built npm packages, generates `.env` files, and runs database migrations. The database and Envoy proxy run as containers (Docker/Podman).
 
 ## Prerequisites
 
-- **Node.js** v20 or higher
-- **Docker or Podman** (for PostgreSQL container)
+- **Node.js** v20 or higher -- install from [nodejs.org](https://nodejs.org/) or via a version manager like [nvm](https://github.com/nvm-sh/nvm)
+- **Docker or Podman** -- install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Podman](https://podman.io/docs/installation) (used for PostgreSQL and Envoy proxy containers)
 
 ## Setup
 
