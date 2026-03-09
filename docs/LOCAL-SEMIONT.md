@@ -24,15 +24,7 @@ mkdir my_semiont_project
 cd my_semiont_project
 ```
 
-### 3. Install Backend and Frontend
-
-```bash
-npm install @semiont/backend @semiont/frontend
-```
-
-This installs pre-built, ready-to-run packages. No compilation or repo clone needed.
-
-### 4. Set Environment Variables
+### 3. Set Environment Variables
 
 ```bash
 export SEMIONT_ROOT=$(pwd)
@@ -41,7 +33,7 @@ export SEMIONT_ENV=local
 
 `SEMIONT_ROOT` tells the CLI where your project lives, so you can run commands from any directory.
 
-### 5. Initialize the Project
+### 4. Initialize the Project
 
 ```bash
 semiont init --verbose
@@ -49,7 +41,7 @@ semiont init --verbose
 
 This creates `semiont.json` and `environments/local.json`.
 
-### 6. Review the Configuration
+### 5. Review the Configuration
 
 ```bash
 cat environments/local.json
@@ -76,7 +68,7 @@ export NEO4J_DATABASE=neo4j
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-### 7. Provision Services
+### 6. Provision Services
 
 ```bash
 semiont provision --verbose
@@ -84,7 +76,7 @@ semiont provision --verbose
 
 This generates `.env` files for backend and frontend, runs database migrations using the Prisma schema bundled in the backend package, and processes proxy configuration.
 
-### 8. Start Services
+### 7. Start Services
 
 ```bash
 semiont start --verbose
@@ -92,13 +84,13 @@ semiont start --verbose
 
 Starts the database container, backend, frontend, and proxy.
 
-### 9. Verify
+### 8. Verify
 
 ```bash
 semiont check
 ```
 
-### 10. Create an Admin User
+### 9. Create an Admin User
 
 ```bash
 semiont useradd --email you@example.com --generate-password --admin
@@ -106,9 +98,9 @@ semiont useradd --email you@example.com --generate-password --admin
 
 Note the generated password from the output.
 
-### 11. Configure Demo Credentials
+### 10. Configure Demo Credentials
 
-The demo scripts need credentials to authenticate against the backend. Copy the example file and fill in the email and password from step 10:
+The demo scripts need credentials to authenticate against the backend. Copy the example file and fill in the email and password from step 9:
 
 ```bash
 cp .env.example .env
@@ -116,9 +108,9 @@ cp .env.example .env
 
 Edit `.env` and set `AUTH_EMAIL` and `AUTH_PASSWORD` to the admin credentials you just created. The other defaults (`BACKEND_URL`, `DATA_DIR`, etc.) are appropriate for a standard local setup.
 
-### 12. Access the Application
+### 11. Access the Application
 
-Open http://localhost:8080 and log in with the admin credentials from step 10.
+Open http://localhost:8080 and log in with the admin credentials from step 9.
 
 ## Service Ports
 
