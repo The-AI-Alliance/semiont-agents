@@ -67,10 +67,18 @@ if [ -n "${CODESPACE_NAME:-}" ]; then
     const fs = require('fs');
     const config = JSON.parse(fs.readFileSync('environments/local.json', 'utf-8'));
 
-    // Database: use Docker service name and devcontainer creds
+    // Database and proxy are managed by docker-compose, not by the CLI.
+    // Set them to 'external' so semiont provision/start doesn't try to create containers.
+    config.services.database.platform = 'external';
     config.services.database.host = 'postgres';
+    config.services.database.port = 5432;
     config.services.database.environment.POSTGRES_USER = 'semiont';
     config.services.database.environment.POSTGRES_PASSWORD = 'semiont';
+    config.services.database.environment.POSTGRES_DB = 'semiont';
+
+    if (config.services.proxy) {
+      config.services.proxy.platform = 'external';
+    }
 
     // Codespaces URLs: all public-facing URLs through Envoy
     config.site.domain = '${SITE_DOMAIN}';
@@ -89,14 +97,22 @@ else
     const fs = require('fs');
     const config = JSON.parse(fs.readFileSync('environments/local.json', 'utf-8'));
 
-    // Database: use Docker service name and devcontainer creds
+    // Database and proxy are managed by docker-compose, not by the CLI.
+    // Set them to 'external' so semiont provision/start doesn't try to create containers.
+    config.services.database.platform = 'external';
     config.services.database.host = 'postgres';
+    config.services.database.port = 5432;
     config.services.database.environment.POSTGRES_USER = 'semiont';
     config.services.database.environment.POSTGRES_PASSWORD = 'semiont';
+    config.services.database.environment.POSTGRES_DB = 'semiont';
+
+    if (config.services.proxy) {
+      config.services.proxy.platform = 'external';
+    }
 
     fs.writeFileSync('environments/local.json', JSON.stringify(config, null, 2) + '\n');
     "
-    log "  ✓ Patched database config for devcontainer"
+    log "  ✓ Patched database and proxy config for devcontainer"
 fi
 
 cd ../.devcontainer
