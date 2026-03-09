@@ -45,24 +45,28 @@ echo ""
 RANDOM_ID=$(openssl rand -hex 8)
 DEMO_EMAIL="dev-${RANDOM_ID}@example.com"
 
-# Wait for postgres to be ready
-print_status "Waiting for PostgreSQL..."
-MAX_WAIT=60
+# Wait for postgres to be ready (using Node.js TCP check — no postgresql-client needed)
+print_status "Waiting for PostgreSQL at postgres:5432..."
+MAX_WAIT=120
 WAITED=0
 while [ $WAITED -lt $MAX_WAIT ]; do
-    if pg_isready -h postgres -p 5432 -U semiont -q 2>/dev/null; then
+    if node -e "const net = require('net'); const s = net.connect(5432, 'postgres', () => { s.end(); process.exit(0); }); s.on('error', () => process.exit(1)); setTimeout(() => process.exit(1), 3000);" 2>/dev/null; then
         print_success "PostgreSQL is ready"
         break
     fi
-    sleep 2
-    WAITED=$((WAITED + 2))
-    if [ $((WAITED % 10)) -eq 0 ]; then
+    sleep 3
+    WAITED=$((WAITED + 3))
+    if [ $((WAITED % 15)) -eq 0 ]; then
         echo "  Still waiting... (${WAITED}s)"
+        # Show DNS resolution status for debugging
+        node -e "require('dns').lookup('postgres', (err, addr) => console.log(err ? '  DNS: ' + err.message : '  DNS: postgres -> ' + addr));" 2>/dev/null || true
     fi
 done
 
 if [ $WAITED -ge $MAX_WAIT ]; then
     print_error "PostgreSQL failed to start within ${MAX_WAIT}s"
+    echo "  Debug: attempting DNS lookup for 'postgres'..."
+    node -e "require('dns').lookup('postgres', (err, addr) => console.log(err ? 'DNS failed: ' + err.message : 'DNS resolves to: ' + addr));" 2>/dev/null || true
     exit 1
 fi
 
@@ -106,11 +110,7 @@ USERADD_OUTPUT=$(semiont useradd --email "$DEMO_EMAIL" --generate-password --adm
 echo "$USERADD_OUTPUT"
 
 # Extract the generated password from the output
-DEMO_PASSWORD=$(echo "$USERADD_OUTPUT" | grep -oP '(?<=Password:\s).*' || echo "")
-if [ -z "$DEMO_PASSWORD" ]; then
-    # Try alternative output format
-    DEMO_PASSWORD=$(echo "$USERADD_OUTPUT" | grep -oP '(?<=password:\s).*' || echo "")
-fi
+DEMO_PASSWORD=$(echo "$USERADD_OUTPUT" | sed -n 's/.*[Pp]assword:[[:space:]]*//p' | head -1)
 
 if [ -z "$DEMO_PASSWORD" ]; then
     print_warning "Could not extract password from output — check above for credentials"
