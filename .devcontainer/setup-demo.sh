@@ -87,6 +87,15 @@ semiont provision -e "$SEMIONT_ENV" --verbose || {
 }
 print_success "Services provisioned"
 
+# Workaround: Next.js standalone binds to container hostname (e.g. 172.18.0.3)
+# instead of 0.0.0.0, which breaks semiont check and localhost access.
+# Fix belongs in semiont CLI's frontend-start.ts — remove this when fixed.
+FRONTEND_ENV="$SEMIONT_ROOT/frontend/.env.local"
+if [ -f "$FRONTEND_ENV" ]; then
+    echo "HOSTNAME=0.0.0.0" >> "$FRONTEND_ENV"
+    print_success "Patched frontend .env.local with HOSTNAME=0.0.0.0"
+fi
+
 # Start backend and frontend
 print_status "Starting services..."
 semiont start -e "$SEMIONT_ENV" --verbose || {
