@@ -40,8 +40,8 @@ import { writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SemiontApiClient } from '@semiont/api-client';
-import type { ResourceUri } from '@semiont/core';
-import { baseUrl, resourceUri } from '@semiont/core';
+import type { ResourceId } from '@semiont/core';
+import { baseUrl } from '@semiont/core';
 import winston from 'winston';
 
 // Dataset configuration types
@@ -186,12 +186,12 @@ const logger = winston.createLogger({
 
 interface DemoState {
   dataset: string;
-  tocId?: ResourceUri;
-  chunkIds?: ResourceUri[];
-  documentIds?: ResourceUri[];
+  tocId?: ResourceId;
+  chunkIds?: ResourceId[];
+  documentIds?: ResourceId[];
   references?: TableOfContentsReference[];
   formattedText: string;
-  phaseResourceIds?: Record<string, ResourceUri[]>;
+  phaseResourceIds?: Record<string, ResourceId[]>;
 }
 
 function saveState(dataset: DatasetConfigWithPaths, state: Omit<DemoState, 'dataset'>): void {
@@ -304,8 +304,8 @@ async function loadCommand(datasetName: string) {
       return;
     }
 
-    let chunkIds: ResourceUri[];
-    let tocId: ResourceUri | undefined;
+    let chunkIds: ResourceId[];
+    let tocId: ResourceId | undefined;
     let references: TableOfContentsReference[] | undefined;
     let formattedText = '';
 
@@ -526,7 +526,7 @@ async function annotateCommand(datasetName: string) {
         printInfo(`Found ${citations.length} citation(s)`, 7);
 
         for (const citation of citations) {
-          await client.createAnnotation(resourceUri(chunkId), {
+          await client.createAnnotation(chunkId, {
             motivation: 'linking',
             target: {
               source: chunkId,
@@ -603,7 +603,7 @@ async function validateCommand(datasetName: string) {
     const state = loadState(dataset);
 
     // Collect all resource URIs
-    const allResources: ResourceUri[] = [];
+    const allResources: ResourceId[] = [];
 
     if (state.tocId) {
       allResources.push(state.tocId);
