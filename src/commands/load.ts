@@ -201,12 +201,7 @@ export async function loadCommand(datasetName: string): Promise<void> {
       printSectionHeader('✨', 5, 'Results');
       console.log();
       console.log('📄 Document:');
-      const parts = chunkIds[0].split('/resources/');
-      if (parts.length !== 2 || !parts[1]) {
-        throw new Error(`Invalid resource ID format: ${chunkIds[0]}`);
-      }
-      const resourceId = parts[1];
-      console.log(`   ${SEMIONT_URL}/en/know/resource/${resourceId}`);
+      console.log(`   ${SEMIONT_URL}/en/know/resource/${chunkIds[0]}`);
       console.log();
     }
 
