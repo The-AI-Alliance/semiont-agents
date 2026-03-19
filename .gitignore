@@ -12,9 +12,6 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 
-# Generated project directory (created by init-env.sh)
-project/
-
 # Docker volume data directories
 data/
 
